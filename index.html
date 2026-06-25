@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>devops-tashtiot</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: #f0f6fc;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #8b949e;
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .card:hover {
+      border-color: #58a6ff;
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      font-size: 1.4rem;
+    }
+
+    .card-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #58a6ff;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: #8b949e;
+      line-height: 1.55;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 56px;
+      color: #484f58;
+      font-size: 0.8rem;
+    }
+
+    footer a { color: #484f58; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>devops-tashtiot</h1>
+  <p>Infrastructure, automation, and platform tooling</p>
+</header>
+
+<div class="grid">
+
+  <a class="card" href="https://github.com/devops-tashtiot/aws-xray-db-sync" target="_blank" rel="noopener">
+    <div class="card-header">
+      <span class="card-icon">🔄</span>
+      <span class="card-name">aws-xray-db-sync</span>
+    </div>
+    <p class="card-desc">
+      Lambda function (Python 3.12) that runs every minute via EventBridge Scheduler to download JFrog Xray offline vulnerability DB bundles into S3.
+      Infrastructure managed with Terraform + Terragrunt. Sends SNS email alerts on success or failure.
+    </p>
+    <div class="card-tags">
+      <span class="tag">AWS Lambda</span>
+      <span class="tag">EventBridge</span>
+      <span class="tag">S3</span>
+      <span class="tag">Terraform</span>
+      <span class="tag">Terragrunt</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/devops-tashtiot/aws-terraform-bootstrap" target="_blank" rel="noopener">
+    <div class="card-header">
+      <span class="card-icon">🏗️</span>
+      <span class="card-name">aws-terraform-bootstrap</span>
+    </div>
+    <p class="card-desc">
+      One-time Terraform that provisions the shared S3 bucket used for remote state across all projects in the AWS account.
+      Run once per account — every other repo depends on this bucket for Terragrunt state storage.
+    </p>
+    <div class="card-tags">
+      <span class="tag">Terraform</span>
+      <span class="tag">S3</span>
+      <span class="tag">Remote State</span>
+      <span class="tag">Bootstrap</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/devops-tashtiot/rhdh-templates" target="_blank" rel="noopener">
+    <div class="card-header">
+      <span class="card-icon">📋</span>
+      <span class="card-name">rhdh-templates</span>
+    </div>
+    <p class="card-desc">
+      Red Hat Developer Hub (RHDH) scaffolder templates for the tashtiot platform.
+      Used by developers to bootstrap new services and projects through a self-service internal developer portal.
+    </p>
+    <div class="card-tags">
+      <span class="tag">RHDH</span>
+      <span class="tag">Backstage</span>
+      <span class="tag">Scaffolding</span>
+      <span class="tag">IDP</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/devops-tashtiot/example-api" target="_blank" rel="noopener">
+    <div class="card-header">
+      <span class="card-icon">⚡</span>
+      <span class="card-name">example-api</span>
+    </div>
+    <p class="card-desc">
+      FastAPI reference template demonstrating the standard project structure for platform APIs.
+      Includes DNS and FQDN service endpoints as examples — intended as a starting point for new API projects.
+    </p>
+    <div class="card-tags">
+      <span class="tag">Python</span>
+      <span class="tag">FastAPI</span>
+      <span class="tag">Template</span>
+      <span class="tag">DNS</span>
+    </div>
+  </a>
+
+</div>
+
+<footer>
+  <a href="https://github.com/devops-tashtiot" target="_blank" rel="noopener">github.com/devops-tashtiot</a>
+</footer>
+
+</body>
+</html>
