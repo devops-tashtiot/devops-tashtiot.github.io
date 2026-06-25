@@ -17,7 +17,7 @@
 
     header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 56px;
     }
 
     header h1 {
@@ -32,19 +32,52 @@
       font-size: 1rem;
     }
 
+    .sections {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #484f58;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #21262d;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-      max-width: 1100px;
-      margin: 0 auto;
+      gap: 16px;
+    }
+
+    /* AWS section: two sub-sections stacked */
+    .aws-subsections {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .subsection-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #30363d;
+      margin-bottom: 10px;
     }
 
     .card {
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 10px;
-      padding: 24px;
+      padding: 22px;
       text-decoration: none;
       color: inherit;
       display: flex;
@@ -64,18 +97,16 @@
       gap: 10px;
     }
 
-    .card-icon {
-      font-size: 1.4rem;
-    }
+    .card-icon { font-size: 1.3rem; }
 
     .card-name {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: #58a6ff;
     }
 
     .card-desc {
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       color: #8b949e;
       line-height: 1.55;
     }
@@ -88,7 +119,7 @@
     }
 
     .tag {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       padding: 2px 8px;
       border-radius: 20px;
       background: #21262d;
@@ -98,7 +129,7 @@
 
     footer {
       text-align: center;
-      margin-top: 56px;
+      margin-top: 64px;
       color: #484f58;
       font-size: 0.8rem;
     }
@@ -113,76 +144,102 @@
   <p>Infrastructure, automation, and platform tooling</p>
 </header>
 
-<div class="grid">
+<div class="sections">
 
-  <a class="card" href="https://github.com/devops-tashtiot/aws-xray-db-sync" target="_blank" rel="noopener">
-    <div class="card-header">
-      <span class="card-icon">🔄</span>
-      <span class="card-name">aws-xray-db-sync</span>
-    </div>
-    <p class="card-desc">
-      Lambda function (Python 3.12) that runs every minute via EventBridge Scheduler to download JFrog Xray offline vulnerability DB bundles into S3.
-      Infrastructure managed with Terraform + Terragrunt. Sends SNS email alerts on success or failure.
-    </p>
-    <div class="card-tags">
-      <span class="tag">AWS Lambda</span>
-      <span class="tag">EventBridge</span>
-      <span class="tag">S3</span>
-      <span class="tag">Terraform</span>
-      <span class="tag">Terragrunt</span>
-    </div>
-  </a>
+  <!-- Platform -->
+  <div>
+    <div class="section-label">Platform</div>
+    <div class="grid">
 
-  <a class="card" href="https://github.com/devops-tashtiot/aws-terraform-bootstrap" target="_blank" rel="noopener">
-    <div class="card-header">
-      <span class="card-icon">🏗️</span>
-      <span class="card-name">aws-terraform-bootstrap</span>
-    </div>
-    <p class="card-desc">
-      One-time Terraform that provisions the shared S3 bucket used for remote state across all projects in the AWS account.
-      Run once per account — every other repo depends on this bucket for Terragrunt state storage.
-    </p>
-    <div class="card-tags">
-      <span class="tag">Terraform</span>
-      <span class="tag">S3</span>
-      <span class="tag">Remote State</span>
-      <span class="tag">Bootstrap</span>
-    </div>
-  </a>
+      <a class="card" href="https://github.com/devops-tashtiot/rhdh-templates" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-icon">📋</span>
+          <span class="card-name">rhdh-templates</span>
+        </div>
+        <p class="card-desc">
+          Red Hat Developer Hub scaffolder templates for the tashtiot platform.
+          Used by developers to bootstrap new services through a self-service internal developer portal.
+        </p>
+        <div class="card-tags">
+          <span class="tag">RHDH</span>
+          <span class="tag">Backstage</span>
+          <span class="tag">Scaffolding</span>
+          <span class="tag">IDP</span>
+        </div>
+      </a>
 
-  <a class="card" href="https://github.com/devops-tashtiot/rhdh-templates" target="_blank" rel="noopener">
-    <div class="card-header">
-      <span class="card-icon">📋</span>
-      <span class="card-name">rhdh-templates</span>
-    </div>
-    <p class="card-desc">
-      Red Hat Developer Hub (RHDH) scaffolder templates for the tashtiot platform.
-      Used by developers to bootstrap new services and projects through a self-service internal developer portal.
-    </p>
-    <div class="card-tags">
-      <span class="tag">RHDH</span>
-      <span class="tag">Backstage</span>
-      <span class="tag">Scaffolding</span>
-      <span class="tag">IDP</span>
-    </div>
-  </a>
+      <a class="card" href="https://github.com/devops-tashtiot/example-api" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-icon">⚡</span>
+          <span class="card-name">example-api</span>
+        </div>
+        <p class="card-desc">
+          FastAPI reference template demonstrating the standard project structure for platform APIs.
+          Includes DNS and FQDN service endpoints — intended as a starting point for new API projects.
+        </p>
+        <div class="card-tags">
+          <span class="tag">Python</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">Template</span>
+          <span class="tag">DNS</span>
+        </div>
+      </a>
 
-  <a class="card" href="https://github.com/devops-tashtiot/example-api" target="_blank" rel="noopener">
-    <div class="card-header">
-      <span class="card-icon">⚡</span>
-      <span class="card-name">example-api</span>
     </div>
-    <p class="card-desc">
-      FastAPI reference template demonstrating the standard project structure for platform APIs.
-      Includes DNS and FQDN service endpoints as examples — intended as a starting point for new API projects.
-    </p>
-    <div class="card-tags">
-      <span class="tag">Python</span>
-      <span class="tag">FastAPI</span>
-      <span class="tag">Template</span>
-      <span class="tag">DNS</span>
+  </div>
+
+  <!-- AWS -->
+  <div>
+    <div class="section-label">AWS</div>
+    <div class="aws-subsections">
+
+      <div>
+        <div class="subsection-label">Bootstrap</div>
+        <div class="grid">
+          <a class="card" href="https://github.com/devops-tashtiot/aws-terraform-bootstrap" target="_blank" rel="noopener">
+            <div class="card-header">
+              <span class="card-icon">🏗️</span>
+              <span class="card-name">aws-terraform-bootstrap</span>
+            </div>
+            <p class="card-desc">
+              One-time Terraform that provisions the shared S3 bucket used for remote state across all projects in the AWS account.
+              Every other repo depends on this bucket for Terragrunt state storage.
+            </p>
+            <div class="card-tags">
+              <span class="tag">Terraform</span>
+              <span class="tag">S3</span>
+              <span class="tag">Remote State</span>
+              <span class="tag">Bootstrap</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <div class="subsection-label">Automation</div>
+        <div class="grid">
+          <a class="card" href="https://github.com/devops-tashtiot/aws-xray-db-sync" target="_blank" rel="noopener">
+            <div class="card-header">
+              <span class="card-icon">🔄</span>
+              <span class="card-name">aws-xray-db-sync</span>
+            </div>
+            <p class="card-desc">
+              Lambda function (Python 3.12) that runs every minute via EventBridge Scheduler to download JFrog Xray offline vulnerability DB bundles into S3.
+              Sends SNS email alerts on success or failure. Infrastructure managed with Terraform + Terragrunt.
+            </p>
+            <div class="card-tags">
+              <span class="tag">AWS Lambda</span>
+              <span class="tag">EventBridge</span>
+              <span class="tag">S3</span>
+              <span class="tag">Terraform</span>
+              <span class="tag">Terragrunt</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
     </div>
-  </a>
+  </div>
 
 </div>
 
