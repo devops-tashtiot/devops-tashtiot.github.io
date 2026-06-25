@@ -1,0 +1,61 @@
+{
+  "org": "devops-tashtiot",
+  "tagline": "Infrastructure, automation, and platform tooling",
+  "sections": [
+    {
+      "name": "Platform",
+      "repos": [
+        {
+          "name": "rhdh-templates",
+          "url": "https://github.com/devops-tashtiot/rhdh-templates",
+          "icon": "📋",
+          "description": "Red Hat Developer Hub scaffolder templates for the tashtiot platform. Used by developers to bootstrap new services through a self-service internal developer portal.",
+          "tags": ["RHDH", "Backstage", "Scaffolding", "IDP"]
+        },
+        {
+          "name": "example-api",
+          "url": "https://github.com/devops-tashtiot/example-api",
+          "icon": "⚡",
+          "description": "FastAPI reference template demonstrating the standard project structure for platform APIs. Includes DNS and FQDN service endpoints — intended as a starting point for new API projects.",
+          "tags": ["Python", "FastAPI", "Template", "DNS"]
+        },
+        {
+          "name": "apis-library",
+          "url": "https://github.com/devops-tashtiot/apis-library",
+          "icon": "📦",
+          "description": "Unified Python package consolidating infrastructure connectors and FastAPI utilities for building production-ready APIs. Includes async clients for AWX, ArgoCD, Bitbucket Server, and Vault, plus a reusable FastAPI application factory with middleware and monitoring.",
+          "tags": ["Python", "FastAPI", "Library", "AWX", "ArgoCD", "Vault"]
+        }
+      ]
+    },
+    {
+      "name": "AWS",
+      "subsections": [
+        {
+          "name": "Bootstrap",
+          "repos": [
+            {
+              "name": "aws-terraform-bootstrap",
+              "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
+              "icon": "🏗️",
+              "description": "One-time Terraform that provisions the shared S3 bucket used for remote state across all projects in the AWS account. Every other repo depends on this bucket for Terragrunt state storage.",
+              "tags": ["Terraform", "S3", "Remote State", "Bootstrap"]
+            }
+          ]
+        },
+        {
+          "name": "Automation",
+          "repos": [
+            {
+              "name": "aws-xray-db-sync",
+              "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
+              "icon": "🔄",
+              "description": "Lambda function (Python 3.12) that runs every minute via EventBridge Scheduler to download JFrog Xray offline vulnerability DB bundles into S3. Sends SNS email alerts on success or failure. Infrastructure managed with Terraform + Terragrunt.",
+              "tags": ["AWS Lambda", "EventBridge", "S3", "Terraform", "Terragrunt"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
