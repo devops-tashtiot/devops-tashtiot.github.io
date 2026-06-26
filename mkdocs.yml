@@ -1,0 +1,29 @@
+site_name: devops-tashtiot
+site_url: https://devops-tashtiot.github.io/docs/
+docs_dir: docs-src
+site_dir: _site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - AWS:
+    - VPC Architecture: aws/vpc-architecture.md
