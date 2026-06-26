@@ -20,8 +20,9 @@ jobs:
         with:
           python-version: '3.x'
           cache: pip
+          cache-dependency-path: requirements.txt
 
-      - run: pip install mkdocs-material
+      - run: pip install -r requirements.txt
 
       - name: Build MkDocs
         run: mkdocs build
