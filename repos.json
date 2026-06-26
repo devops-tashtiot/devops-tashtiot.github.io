@@ -44,18 +44,6 @@
           ]
         },
         {
-          "name": "Networking",
-          "repos": [
-            {
-              "name": "vpc-architecture",
-              "url": "https://devops-tashtiot.github.io/vpc-architecture.html",
-              "icon": "🌐",
-              "description": "Hub-and-Spoke VPC design: spoke VPCs with distributed egress (local NAT GW + IGW) and centralized Network Firewall inspection shared across all accounts.",
-              "tags": ["VPC", "Networking", "Network Firewall", "NAT", "Architecture"]
-            }
-          ]
-        },
-        {
           "name": "Automation",
           "repos": [
             {
