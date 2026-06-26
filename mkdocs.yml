@@ -27,4 +27,3 @@ nav:
   - Home: index.md
   - AWS:
     - VPC Architecture: aws/vpc-architecture.md
-    - Load Balancing: aws/load-balancing.md
