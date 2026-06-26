@@ -15,6 +15,34 @@
       padding: 48px 24px;
     }
 
+    nav {
+      position: fixed;
+      top: 16px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #24292f;
+      text-decoration: none;
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 6px 14px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    nav a:hover {
+      border-color: #0969da;
+      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+      color: #0969da;
+    }
+
     header {
       text-align: center;
       margin-bottom: 56px;
@@ -138,6 +166,10 @@
   </style>
 </head>
 <body>
+
+<nav>
+  <a href="vpc-architecture.html">📄 Docs</a>
+</nav>
 
 <header>
   <h1 id="org-name">devops-tashtiot</h1>
