@@ -29,11 +29,20 @@ cross-account in a shared hub:
 ## VPC
 
 **Name:** `sandboxclouddevelopment-prd-001-spoke-vpc`  
-**CIDR:** `10.3.64.0/22` (1,024 IPs total)
+**CIDR:** `10.3.64.0/22` (1,024 IPs total, range `10.3.64.0 – 10.3.67.255`)
 
-Think of the VPC as your private data centre inside AWS. Everything inside it is
-isolated from other AWS customers. The `/22` block is split across six subnets,
-each with a specific role.
+The `/22` block is divided into six subnets. The split is designed so that workload
+subnets are large and infrastructure subnets are small:
+
+```
+10.3.64.0/22
+├── 10.3.64.0/27   → firewallSubnet1 (AZ 1a)
+├── 10.3.64.32/27  → firewallSubnet2 (AZ 1b)
+├── 10.3.65.0/24   → spokeSubnet1    (AZ 1a)
+├── 10.3.66.0/24   → spokeSubnet2    (AZ 1b)
+├── 10.3.67.0/27   → natSubnet1      (AZ 1a)
+└── 10.3.67.32/27  → natSubnet2      (AZ 1b)
+```
 
 No default VPC is used — everything is purpose-built by CDK.
 
@@ -41,138 +50,121 @@ No default VPC is used — everything is purpose-built by CDK.
 
 ## Subnets
 
-You have six subnets across three types. Each type exists in two Availability Zones
+Six subnets across three types. Each type exists in two Availability Zones
 (`il-central-1a` and `il-central-1b`) for high availability — if one AZ fails,
 traffic continues through the other.
 
 ### Spoke Subnets — where your workloads live
 
-| Subnet | AZ | Size |
-|---|---|---|
-| `spokeSubnet1` | 1a | `/24` — 251 usable IPs |
-| `spokeSubnet2` | 1b | `/24` — 251 usable IPs |
+| Subnet name | Subnet ID | CIDR | AZ | Usable IPs |
+|---|---|---|---|---|
+| `spokeSubnet1` | `subnet-01996bb83a6db398c` | `10.3.65.0/24` | 1a | 251 |
+| `spokeSubnet2` | `subnet-0c8a2d1456074051e` | `10.3.66.0/24` | 1b | 251 |
 
 This is where you deploy everything: EC2 instances, Lambda functions, ECS tasks,
-RDS databases, and so on. The `/24` size gives you 251 IPs per AZ — plenty of room
-as your environment grows.
+RDS databases, and so on. The `/24` block gives 251 usable IPs per AZ.
 
 No resource here has a public IP. The only way out is through the firewall endpoint.
 
 ### Firewall Subnets — the inspection checkpoint
 
-| Subnet | AZ | Size |
-|---|---|---|
-| `firewallSubnet1` | 1a | `/27` — 26 usable IPs |
-| `firewallSubnet2` | 1b | `/27` — 26 usable IPs |
+| Subnet name | Subnet ID | CIDR | AZ | Usable IPs |
+|---|---|---|---|---|
+| `firewallSubnet1` | `subnet-065d2992d7a1b90a9` | `10.3.64.0/27` | 1a | 26 |
+| `firewallSubnet2` | `subnet-084b04815d14b2834` | `10.3.64.32/27` | 1b | 26 |
 
-These subnets do not hold your workloads — they hold the **VPC endpoints** that
-connect your VPC to the shared Network Firewall in the hub account.
+These subnets hold the **Gateway Load Balancer endpoints** that connect to the hub
+account's Network Firewall. No workloads go here.
 
-When traffic leaves a spoke subnet, the route table sends it here first. The endpoint
-forwards it to the hub's firewall for inspection. If the firewall approves it, the
-traffic returns to the firewall subnet and continues to the NAT Gateway.
+Traffic arriving from a spoke subnet is forwarded cross-account to the hub firewall.
+If approved, it returns here and continues to the NAT Gateway.
 
-The `/27` is deliberately small — only the endpoint's network interface needs an IP here,
-not real workloads.
+The `/27` is deliberately small — only the endpoint's network interface needs an IP.
 
 ### NAT Subnets — the exit door
 
-| Subnet | AZ | Size |
-|---|---|---|
-| `natSubnet1` | 1a | `/27` — 26 usable IPs |
-| `natSubnet2` | 1b | `/27` — 26 usable IPs |
+| Subnet name | Subnet ID | CIDR | AZ | Usable IPs |
+|---|---|---|---|---|
+| `natSubnet1` | `subnet-04c18afcc7956af21` | `10.3.67.0/27` | 1a | 26 |
+| `natSubnet2` | `subnet-00e82964cf19f5e31` | `10.3.67.32/27` | 1b | 26 |
 
-After the firewall clears the traffic, it arrives here. The NAT Gateway translates
-your private addresses to a public Elastic IP and sends the packet out through the
-Internet Gateway.
+After the firewall clears the traffic, the NAT Gateway here translates the private
+source address to a fixed public Elastic IP and sends the packet to the Internet Gateway.
 
-Again `/27` — only the NAT Gateway's own network interface needs an IP in this subnet.
+Again `/27` — only the NAT Gateway's own interface needs an IP in this subnet.
 
 ---
 
 ## Internet Gateway
 
-**Name:** `gray-hippo-sandboxclouddevelopment-prd-001-egress-igw`
+**Name:** `gray-hippo-sandboxclouddevelopment-prd-001-egress-igw`  
+**ID:** `igw-0d54a13bd04e6242e`
 
-The Internet Gateway is attached to your VPC and is the **physical door to the
-internet**. It does one thing: route packets between the VPC and the public internet.
-
-On its own, an IGW doesn't allow anything through — routing and NAT still apply.
-Resources in the NAT subnets route `0.0.0.0/0` to the IGW. Resources in other
-subnets never reach the IGW directly.
+Attached to the VPC and is the **physical door to the internet**. On its own it does
+nothing — routing and NAT still apply. Only the NAT subnets route `0.0.0.0/0` to the
+IGW. No other subnet can reach it directly.
 
 ---
 
 ## NAT Gateways
 
-| Name | AZ | Elastic IP |
-|---|---|---|
-| `001-nat-1a` | 1a | `001-eip-1a` |
-| `001-nat-1b` | 1b | `001-eip-1b` |
+| Name | ID | AZ | Subnet | Elastic IP name |
+|---|---|---|---|---|
+| `001-nat-1a` | `nat-03d2ad88c6d3bcda9` | 1a | `natSubnet1` | `001-eip-1a` |
+| `001-nat-1b` | `nat-0fc371e4278247404` | 1b | `natSubnet2` | `001-eip-1b` |
 
-Two NAT Gateways — one per AZ — sit in the NAT subnets. Each has a permanently
-allocated **Elastic IP** (a fixed public IP that doesn't change).
+**What NAT does:** workloads use private addresses not routable on the internet.
+The NAT Gateway swaps the private source IP for its Elastic IP before sending the
+packet out, and swaps it back on the reply. Private resources reach the internet
+without being directly reachable from it.
 
-**What NAT does:** your workloads use private addresses that are not routable on
-the public internet. The NAT Gateway swaps the private source address for its
-Elastic IP before sending the packet out, and swaps it back when the reply comes in.
-This lets private resources reach the internet without being directly reachable from it.
+**Why two?** If AZ 1a fails, AZ 1b's gateway keeps working. Cross-AZ NAT also adds
+latency and cost.
 
-**Why two?** If AZ 1a fails, AZ 1b's NAT Gateway keeps working independently.
-Cross-AZ traffic through a single NAT Gateway would also add latency and cost.
+**Why Elastic IPs?** Fixed public IPs that never change — you can whitelist them at
+external APIs, third-party firewalls, or SaaS allow-lists.
 
-**Why Elastic IPs?** Fixed public IPs let you whitelist your outbound addresses at
-external services (APIs, databases, third-party firewalls). The IPs never change
-even if the NAT Gateway is recreated.
+> **⚠️ AZ 1a anomaly:** current route tables send all traffic — from both AZs —
+> through `firewall-rt-1b` and then `001-nat-1b`. AZ 1a's NAT Gateway and Elastic IP
+> receive zero traffic. You are paying for them but they are idle.
+> See the [Route Tables](#route-tables) section for details.
 
 ---
 
 ## VPC Endpoints (Gateway Load Balancer)
 
-| Name | AZ | Type |
-|---|---|---|
-| `RootHub-inspection-firewall (il-central-1a)` | 1a | GatewayLoadBalancer |
-| `RootHub-inspection-firewall (il-central-1b)` | 1b | GatewayLoadBalancer |
+| Name | ID | AZ | Subnet |
+|---|---|---|---|
+| `RootHub-inspection-firewall (il-central-1a)` | `vpce-065568da4cfe1d602` | 1a | `firewallSubnet1` |
+| `RootHub-inspection-firewall (il-central-1b)` | `vpce-063335608106cb20a` | 1b | `firewallSubnet2` |
 
-These two endpoints are **auto-managed by AWS Network Firewall** — you do not create
-or configure them manually. AWS creates them when the hub account associates the
-firewall with your VPC.
+These are **auto-managed by AWS Network Firewall** — created automatically when the hub
+account associates its firewall with your VPC. You do not create or configure them manually.
 
-**What they are:** Gateway Load Balancer endpoints act as a transparent bump-in-the-wire.
-Traffic enters the endpoint, gets forwarded to the Network Firewall in the hub account
-for inspection, and returns through the same endpoint. From a routing perspective it
-looks like any other hop.
+**Type — GatewayLoadBalancer (not Interface):** Network Firewall uses GWLB endpoints
+because they preserve original packet headers end-to-end, which the firewall needs to
+apply inspection rules correctly.
 
-**Why GatewayLoadBalancer type (not Interface)?** Network Firewall uses GWLB endpoints
-specifically because they preserve the original packet headers end-to-end, which the
-firewall needs in order to apply rules accurately.
-
-**Cross-account:** The `Firewall` tag on each endpoint points to
-`RootHub-inspection-firewall` in the hub account. Your account only owns the endpoints,
-not the firewall itself — you cannot see or modify the inspection rules.
+**Cross-account:** both endpoints point to `RootHub-inspection-firewall` in the hub
+account. Your account owns the endpoints; the hub account owns the firewall and its rules.
+You cannot see or modify the inspection policy from your account.
 
 ---
 
 ## Route Tables
 
-Eight route tables control exactly where every packet goes. The routing is what
-enforces the inspection pipeline — without the correct routes, packets could bypass
-the firewall entirely.
+Eight route tables control exactly where every packet goes. This routing is what
+enforces the inspection pipeline — wrong routes would let traffic bypass the firewall.
 
 ### `igw-rt` — Internet Gateway route table
 
-Associated with the **Internet Gateway itself** (not a subnet).
+Associated with the **Internet Gateway itself** (not a subnet). Handles **inbound** replies.
 
-| Destination | Next hop |
-|---|---|
-| Spoke subnet 1a CIDR | Firewall endpoint 1a |
-| Spoke subnet 1b CIDR | Firewall endpoint 1b |
-| VPC local | local |
-
-This handles **inbound** traffic from the internet. When a reply packet arrives at
-the IGW destined for a spoke subnet, this table intercepts it and sends it through
-the firewall endpoint first — ensuring inbound traffic is also inspected before
-reaching your workloads.
+| Destination | Next hop | Why |
+|---|---|---|
+| `10.3.65.0/24` (spoke 1a) | `vpce-065568da4cfe1d602` (fw endpoint 1a) | Inbound traffic to 1a must pass firewall |
+| `10.3.66.0/24` (spoke 1b) | `vpce-063335608106cb20a` (fw endpoint 1b) | Inbound traffic to 1b must pass firewall |
+| `10.3.64.0/22` | local | VPC-internal stays local |
 
 ### `spoke-rt-1b` — Spoke subnet route table
 
@@ -180,14 +172,10 @@ Associated with **both spoke subnets** (1a and 1b).
 
 | Destination | Next hop |
 |---|---|
-| `0.0.0.0/0` | Firewall endpoint 1b |
-| VPC local | local |
+| `0.0.0.0/0` | `vpce-063335608106cb20a` (firewall endpoint 1b) |
+| `10.3.64.0/22` | local |
 
-All outbound traffic from your workloads hits this table first and goes straight to
-the firewall endpoint. There is no way to reach the internet without passing through it.
-
-> **Note:** `spoke-rt-1a` exists in CloudFormation but is not associated with any subnet.
-> Both spoke subnets currently use `spoke-rt-1b` and route through the 1b firewall endpoint.
+All outbound workload traffic goes to the firewall endpoint first. No bypass possible.
 
 ### `firewall-rt-1b` — Firewall subnet route table
 
@@ -195,81 +183,72 @@ Associated with **both firewall subnets** (1a and 1b).
 
 | Destination | Next hop |
 |---|---|
-| `0.0.0.0/0` | NAT Gateway 1b |
-| VPC local | local |
+| `0.0.0.0/0` | `nat-0fc371e4278247404` (NAT Gateway 1b) |
+| `10.3.64.0/22` | local |
 
-After the hub firewall inspects and approves the traffic, it returns here. This
-table then forwards it to the NAT Gateway to complete the egress journey.
-
-> **Note:** `firewall-rt-1a` also exists but is unassociated — both firewall subnets
-> use `firewall-rt-1b` and route to NAT GW 1b.
+Post-inspection traffic continues to the NAT Gateway.
 
 ### `nat-rt-1a` and `nat-rt-1b` — NAT subnet route tables
 
-Each associated with its respective NAT subnet.
+Each associated with its own NAT subnet.
 
 | Destination | Next hop |
 |---|---|
-| `0.0.0.0/0` | Internet Gateway |
-| VPC local | local |
+| `0.0.0.0/0` | `igw-0d54a13bd04e6242e` (Internet Gateway) |
+| `10.3.64.0/22` | local |
 
-The final hop — the NAT Gateway has already translated the address, and this table
-sends the packet out through the IGW to the public internet.
+The final hop before the public internet.
 
-### Route table anomaly — AZ 1a is partially bypassed
+### Route table anomaly — AZ 1a is effectively bypassed
 
-Both spoke subnets and both firewall subnets share the **1b** route tables, meaning
-traffic always routes through the 1b firewall endpoint and 1b NAT Gateway regardless
-of which AZ the source resource is in. AZ 1a's endpoint and NAT GW exist but receive
-no traffic from the current routing.
+`spoke-rt-1a` and `firewall-rt-1a` both exist in CloudFormation but are **not
+associated with any subnet**. Both spoke subnets and both firewall subnets use the
+`1b` route tables, meaning:
 
-This is likely a CDK deployment issue or intentional consolidation. It means:
+- All traffic (regardless of source AZ) routes through firewall endpoint `1b` and NAT GW `1b`
+- AZ 1a's firewall endpoint (`vpce-065568da4cfe1d602`) and NAT Gateway (`001-nat-1a`) receive no traffic
+- You are paying for `001-nat-1a` and its Elastic IP (`001-eip-1a`) for zero benefit
+- If AZ 1b goes down, there is **no automatic failover** to AZ 1a
 
-- AZ 1a's NAT GW (`001-nat-1a`) and its Elastic IP are idle — you are paying for them
-  but they handle no traffic
-- If AZ 1b goes down, traffic does **not** automatically fail over to AZ 1a
+This is likely a CDK deployment issue where the 1a route tables were created but the
+subnet associations were not applied correctly.
 
 ---
 
 ## Network ACL
 
-One default NACL is applied to all six subnets.
+One default NACL — `acl-0833042dd260ca851` — is applied to all six subnets.
 
 | Direction | Rule | Traffic | Action |
 |---|---|---|---|
-| Inbound | 100 | All | **Allow** |
-| Inbound | 32767 | All | Deny |
-| Outbound | 100 | All | **Allow** |
-| Outbound | 32767 | All | Deny |
+| Inbound | 100 | All protocols | **Allow** |
+| Inbound | 32767 | All protocols | Deny (default) |
+| Outbound | 100 | All protocols | **Allow** |
+| Outbound | 32767 | All protocols | Deny (default) |
 
-**Why fully open?** NACLs are stateless — they evaluate every packet independently,
-including return traffic. Overly restrictive NACLs tend to break things in subtle ways
-(e.g. blocking ephemeral port replies). In this architecture, the real access control
+**Why fully open?** NACLs are stateless — they must explicitly allow return traffic too,
+which makes fine-grained rules error-prone. In this architecture real access control
 happens at two other layers:
 
-1. **Hub Network Firewall** — enforces org-wide egress/ingress policy
-2. **Security Groups** — enforce per-resource access rules
+1. **Hub Network Firewall** — org-wide egress/ingress policy
+2. **Security Groups** — per-resource access rules (stateful)
 
-The NACL is intentionally left open to avoid double-maintenance.
+The NACL is intentionally left open to avoid duplication and breakage.
 
 ---
 
 ## Security Groups
 
-One security group exists — the default, automatically created with the VPC.
+One security group exists — the default (`sg-0ad518583be2c8479`), auto-created with the VPC.
 
 | Direction | Rule |
 |---|---|
-| Inbound | Allow from same security group only |
+| Inbound | Allow from same security group only (self-reference) |
 | Outbound | Allow all |
 
-**No custom security groups exist yet** — because no workloads have been deployed
-into the VPC. When you start deploying resources (EC2, Lambda in VPC, RDS, etc.),
-you will create security groups tailored to each resource's needs.
-
-The default security group's self-referencing inbound rule means resources assigned
-to it can talk to each other freely, but nothing from outside can reach them
-unless you explicitly allow it.
+No custom security groups exist yet because **no workloads have been deployed**.
+When you deploy resources (EC2, RDS, ECS, etc.), create dedicated security groups
+per resource type with the minimum required ports.
 
 ---
 
@@ -277,11 +256,11 @@ unless you explicitly allow it.
 
 | Resource | Present | Why |
 |---|---|---|
-| Transit Gateway | ❌ | Hub uses cross-account GWLB endpoints instead — no TGW needed |
+| Transit Gateway | ❌ | Hub uses cross-account GWLB endpoints — no TGW needed |
 | VPC Peering | ❌ | No peer VPCs in this account |
-| Custom NACLs | ❌ | Default NACL kept open; firewall + SGs handle access control |
+| Custom NACLs | ❌ | Default kept open; firewall + SGs handle access control |
 | Custom Security Groups | ❌ | No workloads deployed yet |
-| VPN / Direct Connect | ❌ | No on-premises connectivity configured |
+| VPN / Direct Connect | ❌ | No on-premises connectivity |
 | Local Network Firewall | ❌ | Inspection is centralized in the hub account |
 
 ---
@@ -290,31 +269,33 @@ unless you explicitly allow it.
 
 ```
 EGRESS (outbound)
-─────────────────
-Workload (spoke subnet)
-  ↓  route: 0.0.0.0/0 → firewall endpoint
-GatewayLoadBalancer endpoint (firewall subnet)
+─────────────────────────────────────────────────────────
+Workload  (spoke subnet — 10.3.65.0/24 or 10.3.66.0/24)
+  ↓  route: 0.0.0.0/0 → vpce-063335608106cb20a
+GWLB endpoint  (firewallSubnet — 10.3.64.0/27 or 10.3.64.32/27)
   ↓  forwarded cross-account
-RootHub-inspection-firewall (hub account)
-  ↓  approved — packet returned
-GatewayLoadBalancer endpoint (firewall subnet)
-  ↓  route: 0.0.0.0/0 → NAT Gateway
-NAT Gateway (NAT subnet)  ← swaps private IP for Elastic IP
-  ↓  route: 0.0.0.0/0 → Internet Gateway
+RootHub-inspection-firewall  (hub account)
+  ↓  approved — packet returned to firewall subnet
+GWLB endpoint  (firewall subnet)
+  ↓  route: 0.0.0.0/0 → nat-0fc371e4278247404
+NAT Gateway  (natSubnet — 10.3.67.0/27 or 10.3.67.32/27)
+             swaps private IP → Elastic IP
+  ↓  route: 0.0.0.0/0 → igw-0d54a13bd04e6242e
 Internet Gateway → Internet
 
 
 INGRESS (inbound reply)
-───────────────────────
+─────────────────────────────────────────────────────────
 Internet → Internet Gateway
-  ↓  IGW route table: destination subnet → firewall endpoint
-GatewayLoadBalancer endpoint (firewall subnet)
+  ↓  IGW route table: 10.3.65.0/24 → vpce-065568da4cfe1d602
+                      10.3.66.0/24 → vpce-063335608106cb20a
+GWLB endpoint  (firewall subnet)
   ↓  forwarded cross-account
-RootHub-inspection-firewall (hub account)
+RootHub-inspection-firewall  (hub account)
   ↓  approved — packet returned
-GatewayLoadBalancer endpoint (firewall subnet)
-  ↓  delivered to workload
-Workload (spoke subnet)
+GWLB endpoint  (firewall subnet)
+  ↓  delivered to destination
+Workload  (spoke subnet)
 ```
 
 Both directions pass through the hub firewall — no packet bypasses inspection.
