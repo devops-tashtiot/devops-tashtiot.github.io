@@ -142,3 +142,68 @@ Key input variables:
 cd terraform/live/devtools/windows-server
 terragrunt apply
 ```
+
+---
+
+## How the IGW Delivers Inbound Packets — Behind the Scenes
+
+When AWS assigns a public IP to an EC2 in a nat subnet, the Internet Gateway internally records a **1:1 mapping**:
+
+```
+Public IP  51.84.223.5  ←→  Private IP  10.3.67.28
+```
+
+This mapping lives inside the IGW itself — not in any route table you can see. AWS manages it automatically for the lifetime of the instance.
+
+### Step by step — inbound RDP connection
+
+```
+1. Your machine sends a TCP packet:
+   Source:      <your-ip>:54321
+   Destination: 51.84.223.5:3389  (Windows Server public IP)
+
+2. Packet travels the internet and arrives at the IGW
+
+3. IGW checks its internal mapping table:
+   "51.84.223.5 belongs to EC2 10.3.67.28"
+   IGW rewrites the destination header:
+   51.84.223.5:3389  →  10.3.67.28:3389
+
+4. IGW checks the natSubnet route table:
+   10.3.67.0/27 → local
+   Packet delivered directly to the EC2 ✅
+
+5. Windows RDP service receives the connection
+```
+
+### Step by step — reply going back out
+
+```
+6. EC2 sends the reply:
+   Source:      10.3.67.28:3389   (private IP)
+   Destination: <your-ip>:54321
+
+7. natSubnet route table: 0.0.0.0/0 → IGW
+   Packet goes to the IGW
+
+8. IGW rewrites the source:
+   10.3.67.28:3389  →  51.84.223.5:3389
+
+9. Packet exits to the internet back to your machine ✅
+```
+
+### IGW vs NAT Gateway — the fundamental difference
+
+```
+IGW (1:1 NAT)
+  51.84.223.5  ←→  10.3.67.28     two-way, permanent, one public IP per instance
+
+NAT Gateway (many:1 NAT)
+  10.3.65.5  ──┐
+  10.3.65.6  ──┼──→  51.85.77.23  one-way, connection-tracked, many instances share one IP
+  10.3.65.7  ──┘
+```
+
+The NAT Gateway only tracks connections **initiated from inside**. An unsolicited packet arriving from the internet has no entry in its connection table — it gets dropped. The IGW has no such restriction because it does a permanent 1:1 swap in both directions.
+
+This is the entire reason why nat subnets support inbound connections and spoke subnets do not.
