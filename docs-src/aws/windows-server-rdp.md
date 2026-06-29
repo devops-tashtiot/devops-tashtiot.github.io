@@ -207,3 +207,19 @@ NAT Gateway (many:1 NAT)
 The NAT Gateway only tracks connections **initiated from inside**. An unsolicited packet arriving from the internet has no entry in its connection table — it gets dropped. The IGW has no such restriction because it does a permanent 1:1 swap in both directions.
 
 This is the entire reason why nat subnets support inbound connections and spoke subnets do not.
+
+### How the IGW mapping is created and destroyed
+
+The IGW does not maintain a lookup table you can see or configure — AWS builds and updates it automatically behind the scenes whenever you assign a public IP to an instance.
+
+**Created** — the moment you launch an instance with `associate_public_ip_address = true` or attach an Elastic IP. AWS registers the pair internally:
+
+```
+51.84.223.5  ←→  10.3.67.28
+```
+
+**Destroyed** — the moment you stop the instance (for auto-assigned IPs) or detach the Elastic IP.
+
+The IGW is not a device you manage. It is an AWS-managed gateway — essentially a distributed NAT service built into the AWS network fabric itself. The mapping table lives inside AWS infrastructure, not inside your VPC. You never configure it manually. It is a side effect of IP assignment: assign a public IP, the mapping appears; remove it, the mapping disappears.
+
+This is also why auto-assigned public IPs are lost on stop — the mapping is destroyed when the instance stops and the IP is returned to the AWS pool. When the instance starts again, a different IP is drawn from the pool and a new mapping is created. An Elastic IP avoids this by keeping the same public IP allocated to your account permanently, so the mapping is always re-created with the same address on every start.
