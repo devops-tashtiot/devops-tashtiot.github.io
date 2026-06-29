@@ -299,3 +299,72 @@ Workload  (spoke subnet)
 ```
 
 Both directions pass through the hub firewall — no packet bypasses inspection.
+
+---
+
+## What Is a Gateway Load Balancer Endpoint?
+
+The GWLB endpoint is the most unusual component in this VPC — it looks like a route table entry but it is actually a **transparent network doorway into another AWS account**.
+
+### The two players
+
+```
+Your account (spoke)               Hub account (security team)
+────────────────────               ───────────────────────────
+GWLB Endpoint                      Gateway Load Balancer (GWLB)
+vpce-063335608106cb20a   ←──────→  + Firewall appliances (EC2s running inspection software)
+  IP: 10.3.64.42
+  Subnet: firewallSubnet2
+```
+
+Your account owns the **endpoint** — just a network interface sitting in `firewallSubnet2`. The hub security account owns the actual **load balancer and firewall VMs** that do the inspection. You cannot see or modify the firewall rules from your account.
+
+### What happens inside when a packet hits the endpoint
+
+```
+1. Packet arrives at GWLB endpoint (10.3.64.42)
+
+2. Endpoint wraps the packet in a GENEVE tunnel
+   (GENEVE puts your original packet inside a new outer packet)
+
+3. Wrapped packet is sent cross-account to the GWLB in the hub
+
+4. GWLB picks a firewall appliance and delivers it
+
+5. Firewall unwraps and inspects the original packet
+   — checks rules: allowed destination? allowed protocol?
+   — if approved → wraps it back and returns it through the tunnel
+
+6. GWLB endpoint receives the packet back and forwards it to the next hop
+```
+
+The original packet is **completely unchanged** throughout — source IP, destination IP, port, protocol. The GENEVE tunnel is invisible to both the sender and the receiver. It is as if the packet passed through a transparent wall that happened to have a security guard examining it.
+
+### Why GWLB instead of a simpler approach
+
+The firewall needs to see the **real** source and destination IPs to apply meaningful rules. Older approaches (like routing through a proxy) rewrote the packet headers, which broke rule matching.
+
+```
+Old way (proxy):
+  EC2 → Firewall proxy → Internet
+  Firewall sees source = proxy IP   ← cannot write rules per workload
+
+GWLB way:
+  EC2 → GWLB endpoint → [GENEVE tunnel] → Firewall → Internet
+  Firewall sees source = real EC2 IP ✅   destination = real destination ✅
+```
+
+GWLB preserves the original headers end-to-end, which is why AWS Network Firewall uses it for VPC traffic inspection.
+
+### This endpoint in your VPC
+
+| Property | Value |
+|---|---|
+| Endpoint ID | `vpce-063335608106cb20a` |
+| Private IP | `10.3.64.42` |
+| Subnet | `firewallSubnet2` (`subnet-084b04815d14b2834`) |
+| Service | `com.amazonaws.vpce.il-central-1.vpce-svc-097b9b80cda8975a8` |
+| Owner | Hub security account (not your account) |
+| Type | `GatewayLoadBalancer` — packets pass *through* it, not *to* it |
+
+You do not manage, configure, or pay for the firewall rules. The endpoint itself is auto-created by AWS when the hub account associates its Network Firewall with your VPC.
