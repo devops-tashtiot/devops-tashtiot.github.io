@@ -28,3 +28,4 @@ nav:
   - AWS:
     - VPC Architecture: aws/vpc-architecture.md
     - Windows Server RDP: aws/windows-server-rdp.md
+    - IRSA Pod Identity: aws/irsa-pod-identity.md
