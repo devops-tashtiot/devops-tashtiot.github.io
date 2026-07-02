@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://devops-tashtiot.github.io/docs/</loc>
+         <lastmod>2026-07-02</lastmod>
+    </url>
+    <url>
+         <loc>https://devops-tashtiot.github.io/docs/aws/control-tower/</loc>
+         <lastmod>2026-07-02</lastmod>
+    </url>
+    <url>
+         <loc>https://devops-tashtiot.github.io/docs/aws/iam-roles/</loc>
+         <lastmod>2026-07-02</lastmod>
+    </url>
+    <url>
+         <loc>https://devops-tashtiot.github.io/docs/aws/irsa-pod-identity/</loc>
+         <lastmod>2026-07-02</lastmod>
+    </url>
+    <url>
+         <loc>https://devops-tashtiot.github.io/docs/aws/vpc-architecture/</loc>
+         <lastmod>2026-07-02</lastmod>
+    </url>
+    <url>
+         <loc>https://devops-tashtiot.github.io/docs/aws/windows-server-rdp/</loc>
+         <lastmod>2026-07-02</lastmod>
+    </url>
+</urlset>
