@@ -56,6 +56,25 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Lessons Learned",
+      "repos": [
+        {
+          "name": "ALB/NLB → Cloudflare Tunnel",
+          "url": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
+          "icon": "🌐",
+          "description": "Skip provisioning an AWS ALB/NLB to expose a service — a Cloudflare Tunnel handles ingress and also gives you free DNS + a managed TLS certificate, without opening inbound ports or paying for a load balancer.",
+          "tags": ["Cloudflare", "Tunnel", "DNS", "TLS", "Cost Saving"]
+        },
+        {
+          "name": "IAM OIDC Identity Provider",
+          "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html",
+          "icon": "🔑",
+          "description": "Register an OIDC identity provider in IAM (e.g. for GitHub Actions) so workflows can assume AWS roles via short-lived federated tokens instead of long-lived IAM access keys.",
+          "tags": ["IAM", "OIDC", "GitHub Actions", "Security"]
+        }
+      ]
     }
   ]
 }
