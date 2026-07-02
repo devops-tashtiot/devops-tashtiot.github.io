@@ -10,21 +10,38 @@
           "url": "https://github.com/devops-tashtiot/rhdh-templates",
           "icon": "📋",
           "description": "RHDH scaffolder templates for bootstrapping new services via the internal developer portal.",
-          "tags": ["RHDH", "Backstage", "Scaffolding", "IDP"]
+          "tags": [
+            "RHDH",
+            "Backstage",
+            "Scaffolding",
+            "IDP"
+          ]
         },
         {
           "name": "example-api",
           "url": "https://github.com/devops-tashtiot/example-api",
           "icon": "⚡",
           "description": "FastAPI reference template with DNS and FQDN endpoints — the starting point for new platform APIs.",
-          "tags": ["Python", "FastAPI", "Template", "DNS"]
+          "tags": [
+            "Python",
+            "FastAPI",
+            "Template",
+            "DNS"
+          ]
         },
         {
           "name": "apis-library",
           "url": "https://github.com/devops-tashtiot/apis-library",
           "icon": "📦",
           "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
-          "tags": ["Python", "FastAPI", "Library", "AWX", "ArgoCD", "Vault"]
+          "tags": [
+            "Python",
+            "FastAPI",
+            "Library",
+            "AWX",
+            "ArgoCD",
+            "Vault"
+          ]
         }
       ]
     },
@@ -39,7 +56,12 @@
               "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
               "icon": "🏗️",
               "description": "One-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects.",
-              "tags": ["Terraform", "S3", "Remote State", "Bootstrap"]
+              "tags": [
+                "Terraform",
+                "S3",
+                "Remote State",
+                "Bootstrap"
+              ]
             }
           ]
         },
@@ -51,7 +73,13 @@
               "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
               "icon": "🔄",
               "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure.",
-              "tags": ["AWS Lambda", "EventBridge", "S3", "Terraform", "Terragrunt"]
+              "tags": [
+                "AWS Lambda",
+                "EventBridge",
+                "S3",
+                "Terraform",
+                "Terragrunt"
+              ]
             }
           ]
         }
@@ -65,14 +93,40 @@
           "url": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
           "icon": "🌐",
           "description": "An SCP pushed down from the Control Tower management account denies elasticloadbalancing:CreateLoadBalancer in member accounts, so provisioning an ALB/NLB fails outright. Workaround: skip the load balancer entirely and expose the service via a Cloudflare Tunnel — it also hands you free DNS and a managed TLS certificate, without opening any inbound ports.",
-          "tags": ["SCP", "Control Tower", "Cloudflare", "Tunnel", "DNS", "TLS"]
+          "tags": [
+            "SCP",
+            "Control Tower",
+            "Cloudflare",
+            "Tunnel",
+            "DNS",
+            "TLS"
+          ]
         },
         {
           "name": "SCP blocks IAM OIDC Identity Provider",
           "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html",
           "icon": "🔑",
           "description": "An SCP pushed down from the Control Tower management account denies iam:CreateOpenIDConnectProvider in member accounts, blocking OIDC federation (e.g. for GitHub Actions) at the account level — the identity provider has to be created from the management account instead, since no IAM policy change inside the member account can override an SCP.",
-          "tags": ["SCP", "Control Tower", "IAM", "OIDC", "GitHub Actions"]
+          "tags": [
+            "SCP",
+            "Control Tower",
+            "IAM",
+            "OIDC",
+            "GitHub Actions"
+          ]
+        },
+        {
+          "name": "SCP blocks Route53 CreateHostedZone",
+          "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-private.html",
+          "icon": "🧭",
+          "description": "An SCP pushed down from the Control Tower management account denies route53:CreateHostedZone in member accounts, so a private hosted zone for internal DNS (e.g. giving an EC2 instance a stable name that survives replacement) fails outright — no IAM policy inside the member account can override an SCP explicit deny. Workaround: have Terraform publish the dynamic value (e.g. the instance's private IP) to an SSM Parameter Store parameter on every apply, and have consumers read it from SSM instead of resolving a DNS name.",
+          "tags": [
+            "SCP",
+            "Control Tower",
+            "Route53",
+            "DNS",
+            "SSM Parameter Store"
+          ]
         }
       ]
     }
