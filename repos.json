@@ -48,6 +48,70 @@
       ]
     },
     {
+      "name": "GitOps Platform",
+      "subsections": [
+        {
+          "name": "Cluster Infra",
+          "repos": [
+            {
+              "name": "clusters-provision",
+              "url": "https://github.com/devops-tashtiot/clusters-provision",
+              "icon": "🌐",
+              "description": "ArgoCD umbrella Helm charts for shared cluster infrastructure — ingress-nginx, cloudflared, external-secrets-operator.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "ingress-nginx",
+                "cloudflared"
+              ]
+            },
+            {
+              "name": "clusters-definition",
+              "url": "https://github.com/devops-tashtiot/clusters-definition",
+              "icon": "🔧",
+              "description": "Environment-specific Helm values overrides for shared cluster infrastructure, plus the ApplicationSet that auto-discovers each tool.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "ApplicationSet",
+                "Values"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Devtools",
+          "repos": [
+            {
+              "name": "devtools-provision",
+              "url": "https://github.com/devops-tashtiot/devtools-provision",
+              "icon": "🧩",
+              "description": "ArgoCD umbrella Helm charts for end-user devtools — Jira, Bitbucket, Confluence, Artifactory, ArgoCD.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "Jira",
+                "Bitbucket",
+                "Confluence"
+              ]
+            },
+            {
+              "name": "devtools-definition",
+              "url": "https://github.com/devops-tashtiot/devtools-definition",
+              "icon": "🗂️",
+              "description": "Environment-specific Helm values overrides for devtools provisioning, plus the ApplicationSet that auto-discovers each tool.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "ApplicationSet",
+                "Values"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "AWS",
       "subsections": [
         {
