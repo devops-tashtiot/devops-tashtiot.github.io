@@ -1,0 +1,1090 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://devops-tashtiot.github.io/docs/aws/iam-roles/">
+      
+      
+        <link rel="prev" href="../irsa-pod-identity/">
+      
+      
+        <link rel="next" href="../control-tower/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>IAM Roles - devops-tashtiot</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#iam-roles" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="devops-tashtiot" class="md-header__button md-logo" aria-label="devops-tashtiot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            devops-tashtiot
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              IAM Roles
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="devops-tashtiot" class="md-nav__button md-logo" aria-label="devops-tashtiot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    devops-tashtiot
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vpc-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VPC Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windows-server-rdp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server RDP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../irsa-pod-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IRSA Pod Identity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IAM Roles
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IAM Roles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sso-human-access-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSO / Human Access Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#control-tower-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Tower Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eks-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EKS Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-hours-cost-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Cost Automation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#infrastructure-iac-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure / IaC Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws-service-linked-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Service-Linked Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control-tower/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Tower
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sso-human-access-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSO / Human Access Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#control-tower-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Tower Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eks-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EKS Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-hours-cost-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After-Hours Cost Automation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#infrastructure-iac-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure / IaC Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws-service-linked-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Service-Linked Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other Roles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="iam-roles">IAM Roles</h1>
+<p>This page summarizes every IAM role in the AWS workload account, grouped by purpose. Understanding who (or what) uses each role helps with least-privilege audits, incident response, and onboarding.</p>
+<hr />
+<h2 id="sso-human-access-roles">SSO / Human Access Roles</h2>
+<p>These roles are federated via <strong>AWS IAM Identity Center (SSO)</strong>. No long-lived IAM users exist — humans assume these roles temporarily after authenticating through SSO.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Access Level</th>
+<th>When Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AWSAdministratorAccess</code></td>
+<td>Full admin — every AWS action</td>
+<td>Break-glass emergencies or org-level admin tasks</td>
+</tr>
+<tr>
+<td><code>AWSPowerUserAccess</code></td>
+<td>Full except IAM user/group management</td>
+<td>Developers needing broad but bounded access</td>
+</tr>
+<tr>
+<td><code>AWSReadOnlyAccess</code></td>
+<td>Read everything, change nothing</td>
+<td>Auditors, monitoring dashboards, on-call review</td>
+</tr>
+<tr>
+<td><code>AWSOrganizationsFullAccess</code></td>
+<td>Manage OUs, accounts, and SCPs</td>
+<td>Restructuring the org or moving accounts between OUs</td>
+</tr>
+<tr>
+<td><code>Workload-Admin-PS</code></td>
+<td>Full workload admin</td>
+<td>Day-to-day infra work — Terraform, EKS, networking</td>
+</tr>
+<tr>
+<td><code>Workload-Security-Admin-PS</code></td>
+<td>Security admin + data perimeter reads</td>
+<td>Managing firewall rules and perimeter exceptions between spoke OUs</td>
+</tr>
+<tr>
+<td><code>Workload-Security-Audit-PS</code></td>
+<td>Read-only resource configurations</td>
+<td>Security audits, compliance reviews</td>
+</tr>
+<tr>
+<td><code>Workload-Security-Tagger-PS</code></td>
+<td>Tag resources only</td>
+<td>Enforcing tagging standards without broader access</td>
+</tr>
+<tr>
+<td><code>Workload-Support-Admin-PS</code></td>
+<td>Support + perimeter exemptions</td>
+<td>Escalating AWS Support cases, handling support-level perimeter access</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Why SSO roles instead of IAM users?</strong> SSO-federated roles issue short-lived credentials (typically 1–8 hours). There are no permanent access keys to rotate, leak, or forget to revoke when someone leaves the team.</p>
+</blockquote>
+<hr />
+<h2 id="control-tower-roles">Control Tower Roles</h2>
+<p>Control Tower deploys these roles into every member account so the management account can enforce baselines and guardrails without manual intervention per account. See the <a href="../control-tower/">Control Tower</a> page for the full architecture.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AWSControlTowerExecution</code></td>
+<td>Assumed by the management account — gives CT full admin to enforce baselines in this account</td>
+</tr>
+<tr>
+<td><code>aws-controltower-AdministratorExecutionRole</code></td>
+<td>Used by CT to apply guardrails, run StackSets, and remediate drift</td>
+</tr>
+<tr>
+<td><code>aws-controltower-ConfigRecorderRole</code></td>
+<td>Allows AWS Config to record all resource changes for compliance tracking</td>
+</tr>
+<tr>
+<td><code>aws-controltower-ForwardSnsNotificationRole</code></td>
+<td>Forwards compliance alerts upstream to the central SNS topic in the management account</td>
+</tr>
+<tr>
+<td><code>aws-controltower-ReadOnlyExecutionRole</code></td>
+<td>CT reads this account's state to detect configuration drift</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForAWSControlTower</code></td>
+<td>Service-linked role — CT's permanent presence in this account</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="eks-roles">EKS Roles</h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>devtools-labs-cluster-*</code></td>
+<td>EKS control plane role — allows EKS to manage VPC ENIs, security groups, and load balancers</td>
+</tr>
+<tr>
+<td><code>default-eks-node-group-*</code></td>
+<td>Node IAM role — allows nodes to pull ECR images, join the cluster, and call EKS APIs</td>
+</tr>
+<tr>
+<td><code>devtools-labs-alb-controller</code></td>
+<td>IRSA role for the ALB Ingress Controller pod — grants it permission to manage ALBs and target groups</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForAmazonEKS</code></td>
+<td>EKS service-linked role — auto-created by AWS when EKS is first used</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForAmazonEKSNodegroup</code></td>
+<td>Nodegroup service-linked role — manages node lifecycle</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The <code>devtools-labs-alb-controller</code> role uses <strong>IRSA</strong> (IAM Roles for Service Accounts) — see <a href="../irsa-pod-identity/">IRSA: Pod Identity Token Lifecycle</a> for how the Pod receives credentials without any secrets in code.</p>
+</blockquote>
+<hr />
+<h2 id="after-hours-cost-automation">After-Hours Cost Automation</h2>
+<p>These roles power the automated shutdown of resources outside business hours to reduce costs.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>after-hours-scheduler-role</code></td>
+<td>Allows EventBridge Scheduler to invoke the shutdown Lambda on a cron schedule</td>
+</tr>
+<tr>
+<td><code>after-hours-shutdown-role-*</code> / <code>afterhours-shut-down-role</code></td>
+<td>Lambda execution role — permission to stop EC2 instances</td>
+</tr>
+<tr>
+<td><code>EC2Stop-Role</code></td>
+<td>Scoped role with <code>ec2:StopInstances</code> permission</td>
+</tr>
+<tr>
+<td><code>Amazon_EventBridge_Scheduler_LAMBDA_*</code></td>
+<td>EventBridge Scheduler invocation role for Lambda targets</td>
+</tr>
+<tr>
+<td><code>lz-integration-Accounts-Shutdown-Role</code></td>
+<td>Org-wide shutdown role — assumes into member accounts to stop resources across the landing zone</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="infrastructure-iac-roles">Infrastructure / IaC Roles</h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>horizon-terraform-role</code></td>
+<td>Assumed by Terraform (CI/CD or local) to provision all infrastructure in this account</td>
+</tr>
+<tr>
+<td><code>lz-integration-cdk-deploy-role</code></td>
+<td>CDK deployment role — used during <code>cdk deploy</code> to orchestrate the deployment</td>
+</tr>
+<tr>
+<td><code>lz-integration-cdk-cfn-exec-role</code></td>
+<td>CloudFormation execution role — the identity CloudFormation uses to actually create resources during a CDK deploy</td>
+</tr>
+<tr>
+<td><code>DeleteDefaultVPCStackSetRole</code></td>
+<td>Used by a StackSet that removes the AWS default VPC from newly vended accounts</td>
+</tr>
+<tr>
+<td><code>stacksets-exec-*</code></td>
+<td>CloudFormation StackSets execution role — receives StackSet operations from the management account</td>
+</tr>
+<tr>
+<td><code>FlowLogRole-*</code></td>
+<td>Allows VPC Flow Logs to write to CloudWatch Logs</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="aws-service-linked-roles">AWS Service-Linked Roles</h2>
+<p>These are auto-created by AWS when you enable a service. They cannot be manually assumed — only the named AWS service can use them.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AWSServiceRoleForAutoScaling</code></td>
+<td>EC2 Auto Scaling groups</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForCloudTrail</code></td>
+<td>CloudTrail audit logging</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForConfig</code></td>
+<td>AWS Config compliance recording</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForFMS</code></td>
+<td>Firewall Manager — centralized SG and WAF policies pushed from the management account</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForIPAM</code></td>
+<td>IP Address Manager — centralized VPC CIDR planning</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForNetworkFirewall</code></td>
+<td>Network Firewall — the hub inspection layer traffic routes through</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForOrganizations</code></td>
+<td>AWS Organizations integration</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForSSO</code></td>
+<td>IAM Identity Center — manages the <code>AWSReservedSSO_*</code> roles</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForSupport</code></td>
+<td>AWS Support case management</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForTrustedAdvisor</code></td>
+<td>Cost, performance, and security recommendations</td>
+</tr>
+<tr>
+<td><code>AWSServiceRoleForCloudFormationStackSetsOrgMember</code></td>
+<td>Receives StackSet deployments from the management account</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="other-roles">Other Roles</h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xray-cron-lambda-role</code></td>
+<td>Lambda execution role for X-Ray tracing jobs</td>
+</tr>
+<tr>
+<td><code>xray-cron-scheduler-role</code></td>
+<td>EventBridge Scheduler role for X-Ray cron</td>
+</tr>
+<tr>
+<td><code>lz-integration-bedrock-cloudwatch-logging-role</code></td>
+<td>Allows Amazon Bedrock to write inference logs to CloudWatch</td>
+</tr>
+<tr>
+<td><code>lz-integration-bedrock-cloudwatch-read-role</code></td>
+<td>Read access to Bedrock CloudWatch logs</td>
+</tr>
+<tr>
+<td><code>BlastUnitCollectorRole</code></td>
+<td>Security posture / blast-radius scanning tool</td>
+</tr>
+<tr>
+<td><code>Costi</code></td>
+<td>Cost visibility and optimization tool</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="related-topics">Related Topics</h2>
+<ul>
+<li><a href="../control-tower/">Control Tower</a> — how the management account governs this account</li>
+<li><a href="../irsa-pod-identity/">IRSA: Pod Identity Token Lifecycle</a> — how EKS pods use IAM roles without credentials</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

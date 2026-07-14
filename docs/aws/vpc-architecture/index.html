@@ -1,0 +1,1720 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://devops-tashtiot.github.io/docs/aws/vpc-architecture/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../windows-server-rdp/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>VPC Architecture - devops-tashtiot</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vpc-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="devops-tashtiot" class="md-header__button md-logo" aria-label="devops-tashtiot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            devops-tashtiot
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VPC Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="devops-tashtiot" class="md-nav__button md-logo" aria-label="devops-tashtiot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    devops-tashtiot
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VPC Architecture
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VPC Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Big Picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subnets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Subnets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spoke-subnets-where-your-workloads-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spoke Subnets — where your workloads live
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-subnets-the-inspection-checkpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall Subnets — the inspection checkpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat-subnets-the-exit-door" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Subnets — the exit door
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internet-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internet Gateway
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nat-gateways" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Gateways
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpc-endpoints-gateway-load-balancer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC Endpoints (Gateway Load Balancer)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#route-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route Tables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Route Tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#igw-rt-internet-gateway-route-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        igw-rt — Internet Gateway route table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spoke-rt-1b-spoke-subnet-route-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spoke-rt-1b — Spoke subnet route table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-rt-1b-firewall-subnet-route-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        firewall-rt-1b — Firewall subnet route table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat-rt-1a-and-nat-rt-1b-nat-subnet-route-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nat-rt-1a and nat-rt-1b — NAT subnet route tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-table-anomaly-az-1a-is-effectively-bypassed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route table anomaly — AZ 1a is effectively bypassed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network ACL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Groups
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-not-present" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Is Not Present
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-egress-ingress-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Egress + Ingress Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-gateway-load-balancer-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Is a Gateway Load Balancer Endpoint?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What Is a Gateway Load Balancer Endpoint?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-two-players" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The two players
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-inside-when-a-packet-hits-the-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens inside when a packet hits the endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-gwlb-instead-of-a-simpler-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why GWLB instead of a simpler approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#this-endpoint-in-your-vpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        This endpoint in your VPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windows-server-rdp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server RDP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../irsa-pod-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IRSA Pod Identity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../iam-roles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IAM Roles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control-tower/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Tower
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Big Picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subnets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Subnets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spoke-subnets-where-your-workloads-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spoke Subnets — where your workloads live
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-subnets-the-inspection-checkpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall Subnets — the inspection checkpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat-subnets-the-exit-door" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Subnets — the exit door
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internet-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internet Gateway
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nat-gateways" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT Gateways
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpc-endpoints-gateway-load-balancer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VPC Endpoints (Gateway Load Balancer)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#route-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route Tables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Route Tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#igw-rt-internet-gateway-route-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        igw-rt — Internet Gateway route table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spoke-rt-1b-spoke-subnet-route-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spoke-rt-1b — Spoke subnet route table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-rt-1b-firewall-subnet-route-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        firewall-rt-1b — Firewall subnet route table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat-rt-1a-and-nat-rt-1b-nat-subnet-route-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nat-rt-1a and nat-rt-1b — NAT subnet route tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-table-anomaly-az-1a-is-effectively-bypassed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route table anomaly — AZ 1a is effectively bypassed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network ACL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Groups
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-not-present" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Is Not Present
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-egress-ingress-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Egress + Ingress Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-gateway-load-balancer-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Is a Gateway Load Balancer Endpoint?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What Is a Gateway Load Balancer Endpoint?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-two-players" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The two players
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-inside-when-a-packet-hits-the-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens inside when a packet hits the endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-gwlb-instead-of-a-simpler-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why GWLB instead of a simpler approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#this-endpoint-in-your-vpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        This endpoint in your VPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="vpc-architecture">VPC Architecture</h1>
+<p>Hub-and-Spoke network design with distributed egress and centralized inspection.<br />
+Region: <code>il-central-1</code> (Israel) · Created by CDK via CloudFormation.</p>
+<hr />
+<h2 id="the-big-picture">The Big Picture</h2>
+<p>Your AWS account has <strong>one VPC</strong> that acts as a spoke in a hub-and-spoke architecture.
+Every resource you deploy lives inside this VPC. Nothing has a public IP — all internet
+traffic is forced through an inspection pipeline before it can leave or enter.</p>
+<p>The pipeline has three layers, all within your VPC, but with inspection happening
+cross-account in a shared hub:</p>
+<pre><code>[ Your workload ]
+      ↓
+[ Hub firewall ]   ← lives in a shared security account, not yours
+      ↓
+[ NAT Gateway ]    ← lives in your account
+      ↓
+[ Internet ]
+</code></pre>
+<hr />
+<h2 id="vpc">VPC</h2>
+<p><strong>Name:</strong> <code>sandboxclouddevelopment-prd-001-spoke-vpc</code><br />
+<strong>CIDR:</strong> <code>10.3.64.0/22</code> (1,024 IPs total, range <code>10.3.64.0 – 10.3.67.255</code>)</p>
+<p>The <code>/22</code> block is divided into six subnets. The split is designed so that workload
+subnets are large and infrastructure subnets are small:</p>
+<pre><code>10.3.64.0/22
+├── 10.3.64.0/27   → firewallSubnet1 (AZ 1a)
+├── 10.3.64.32/27  → firewallSubnet2 (AZ 1b)
+├── 10.3.65.0/24   → spokeSubnet1    (AZ 1a)
+├── 10.3.66.0/24   → spokeSubnet2    (AZ 1b)
+├── 10.3.67.0/27   → natSubnet1      (AZ 1a)
+└── 10.3.67.32/27  → natSubnet2      (AZ 1b)
+</code></pre>
+<p>No default VPC is used — everything is purpose-built by CDK.</p>
+<hr />
+<h2 id="subnets">Subnets</h2>
+<p>Six subnets across three types. Each type exists in two Availability Zones
+(<code>il-central-1a</code> and <code>il-central-1b</code>) for high availability — if one AZ fails,
+traffic continues through the other.</p>
+<h3 id="spoke-subnets-where-your-workloads-live">Spoke Subnets — where your workloads live</h3>
+<table>
+<thead>
+<tr>
+<th>Subnet name</th>
+<th>Subnet ID</th>
+<th>CIDR</th>
+<th>AZ</th>
+<th>Usable IPs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>spokeSubnet1</code></td>
+<td><code>subnet-01996bb83a6db398c</code></td>
+<td><code>10.3.65.0/24</code></td>
+<td>1a</td>
+<td>251</td>
+</tr>
+<tr>
+<td><code>spokeSubnet2</code></td>
+<td><code>subnet-0c8a2d1456074051e</code></td>
+<td><code>10.3.66.0/24</code></td>
+<td>1b</td>
+<td>251</td>
+</tr>
+</tbody>
+</table>
+<p>This is where you deploy everything: EC2 instances, Lambda functions, ECS tasks,
+RDS databases, and so on. The <code>/24</code> block gives 251 usable IPs per AZ.</p>
+<p>No resource here has a public IP. The only way out is through the firewall endpoint.</p>
+<h3 id="firewall-subnets-the-inspection-checkpoint">Firewall Subnets — the inspection checkpoint</h3>
+<table>
+<thead>
+<tr>
+<th>Subnet name</th>
+<th>Subnet ID</th>
+<th>CIDR</th>
+<th>AZ</th>
+<th>Usable IPs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>firewallSubnet1</code></td>
+<td><code>subnet-065d2992d7a1b90a9</code></td>
+<td><code>10.3.64.0/27</code></td>
+<td>1a</td>
+<td>26</td>
+</tr>
+<tr>
+<td><code>firewallSubnet2</code></td>
+<td><code>subnet-084b04815d14b2834</code></td>
+<td><code>10.3.64.32/27</code></td>
+<td>1b</td>
+<td>26</td>
+</tr>
+</tbody>
+</table>
+<p>These subnets hold the <strong>Gateway Load Balancer endpoints</strong> that connect to the hub
+account's Network Firewall. No workloads go here.</p>
+<p>Traffic arriving from a spoke subnet is forwarded cross-account to the hub firewall.
+If approved, it returns here and continues to the NAT Gateway.</p>
+<p>The <code>/27</code> is deliberately small — only the endpoint's network interface needs an IP.</p>
+<h3 id="nat-subnets-the-exit-door">NAT Subnets — the exit door</h3>
+<table>
+<thead>
+<tr>
+<th>Subnet name</th>
+<th>Subnet ID</th>
+<th>CIDR</th>
+<th>AZ</th>
+<th>Usable IPs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>natSubnet1</code></td>
+<td><code>subnet-04c18afcc7956af21</code></td>
+<td><code>10.3.67.0/27</code></td>
+<td>1a</td>
+<td>26</td>
+</tr>
+<tr>
+<td><code>natSubnet2</code></td>
+<td><code>subnet-00e82964cf19f5e31</code></td>
+<td><code>10.3.67.32/27</code></td>
+<td>1b</td>
+<td>26</td>
+</tr>
+</tbody>
+</table>
+<p>After the firewall clears the traffic, the NAT Gateway here translates the private
+source address to a fixed public Elastic IP and sends the packet to the Internet Gateway.</p>
+<p>Again <code>/27</code> — only the NAT Gateway's own interface needs an IP in this subnet.</p>
+<hr />
+<h2 id="internet-gateway">Internet Gateway</h2>
+<p><strong>Name:</strong> <code>gray-hippo-sandboxclouddevelopment-prd-001-egress-igw</code><br />
+<strong>ID:</strong> <code>igw-0d54a13bd04e6242e</code></p>
+<p>Attached to the VPC and is the <strong>physical door to the internet</strong>. On its own it does
+nothing — routing and NAT still apply. Only the NAT subnets route <code>0.0.0.0/0</code> to the
+IGW. No other subnet can reach it directly.</p>
+<hr />
+<h2 id="nat-gateways">NAT Gateways</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>ID</th>
+<th>AZ</th>
+<th>Subnet</th>
+<th>Elastic IP name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>001-nat-1a</code></td>
+<td><code>nat-03d2ad88c6d3bcda9</code></td>
+<td>1a</td>
+<td><code>natSubnet1</code></td>
+<td><code>001-eip-1a</code></td>
+</tr>
+<tr>
+<td><code>001-nat-1b</code></td>
+<td><code>nat-0fc371e4278247404</code></td>
+<td>1b</td>
+<td><code>natSubnet2</code></td>
+<td><code>001-eip-1b</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What NAT does:</strong> workloads use private addresses not routable on the internet.
+The NAT Gateway swaps the private source IP for its Elastic IP before sending the
+packet out, and swaps it back on the reply. Private resources reach the internet
+without being directly reachable from it.</p>
+<p><strong>Why two?</strong> If AZ 1a fails, AZ 1b's gateway keeps working. Cross-AZ NAT also adds
+latency and cost.</p>
+<p><strong>Why Elastic IPs?</strong> Fixed public IPs that never change — you can whitelist them at
+external APIs, third-party firewalls, or SaaS allow-lists.</p>
+<blockquote>
+<p><strong>⚠️ AZ 1a anomaly:</strong> current route tables send all traffic — from both AZs —
+through <code>firewall-rt-1b</code> and then <code>001-nat-1b</code>. AZ 1a's NAT Gateway and Elastic IP
+receive zero traffic. You are paying for them but they are idle.
+See the <a href="#route-tables">Route Tables</a> section for details.</p>
+</blockquote>
+<hr />
+<h2 id="vpc-endpoints-gateway-load-balancer">VPC Endpoints (Gateway Load Balancer)</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>ID</th>
+<th>AZ</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RootHub-inspection-firewall (il-central-1a)</code></td>
+<td><code>vpce-065568da4cfe1d602</code></td>
+<td>1a</td>
+<td><code>firewallSubnet1</code></td>
+</tr>
+<tr>
+<td><code>RootHub-inspection-firewall (il-central-1b)</code></td>
+<td><code>vpce-063335608106cb20a</code></td>
+<td>1b</td>
+<td><code>firewallSubnet2</code></td>
+</tr>
+</tbody>
+</table>
+<p>These are <strong>auto-managed by AWS Network Firewall</strong> — created automatically when the hub
+account associates its firewall with your VPC. You do not create or configure them manually.</p>
+<p><strong>Type — GatewayLoadBalancer (not Interface):</strong> Network Firewall uses GWLB endpoints
+because they preserve original packet headers end-to-end, which the firewall needs to
+apply inspection rules correctly.</p>
+<p><strong>Cross-account:</strong> both endpoints point to <code>RootHub-inspection-firewall</code> in the hub
+account. Your account owns the endpoints; the hub account owns the firewall and its rules.
+You cannot see or modify the inspection policy from your account.</p>
+<hr />
+<h2 id="route-tables">Route Tables</h2>
+<p>Eight route tables control exactly where every packet goes. This routing is what
+enforces the inspection pipeline — wrong routes would let traffic bypass the firewall.</p>
+<h3 id="igw-rt-internet-gateway-route-table"><code>igw-rt</code> — Internet Gateway route table</h3>
+<p>Associated with the <strong>Internet Gateway itself</strong> (not a subnet). Handles <strong>inbound</strong> replies.</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Next hop</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>10.3.65.0/24</code> (spoke 1a)</td>
+<td><code>vpce-065568da4cfe1d602</code> (fw endpoint 1a)</td>
+<td>Inbound traffic to 1a must pass firewall</td>
+</tr>
+<tr>
+<td><code>10.3.66.0/24</code> (spoke 1b)</td>
+<td><code>vpce-063335608106cb20a</code> (fw endpoint 1b)</td>
+<td>Inbound traffic to 1b must pass firewall</td>
+</tr>
+<tr>
+<td><code>10.3.64.0/22</code></td>
+<td>local</td>
+<td>VPC-internal stays local</td>
+</tr>
+</tbody>
+</table>
+<h3 id="spoke-rt-1b-spoke-subnet-route-table"><code>spoke-rt-1b</code> — Spoke subnet route table</h3>
+<p>Associated with <strong>both spoke subnets</strong> (1a and 1b).</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Next hop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0.0.0.0/0</code></td>
+<td><code>vpce-063335608106cb20a</code> (firewall endpoint 1b)</td>
+</tr>
+<tr>
+<td><code>10.3.64.0/22</code></td>
+<td>local</td>
+</tr>
+</tbody>
+</table>
+<p>All outbound workload traffic goes to the firewall endpoint first. No bypass possible.</p>
+<h3 id="firewall-rt-1b-firewall-subnet-route-table"><code>firewall-rt-1b</code> — Firewall subnet route table</h3>
+<p>Associated with <strong>both firewall subnets</strong> (1a and 1b).</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Next hop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0.0.0.0/0</code></td>
+<td><code>nat-0fc371e4278247404</code> (NAT Gateway 1b)</td>
+</tr>
+<tr>
+<td><code>10.3.64.0/22</code></td>
+<td>local</td>
+</tr>
+</tbody>
+</table>
+<p>Post-inspection traffic continues to the NAT Gateway.</p>
+<h3 id="nat-rt-1a-and-nat-rt-1b-nat-subnet-route-tables"><code>nat-rt-1a</code> and <code>nat-rt-1b</code> — NAT subnet route tables</h3>
+<p>Each associated with its own NAT subnet.</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Next hop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0.0.0.0/0</code></td>
+<td><code>igw-0d54a13bd04e6242e</code> (Internet Gateway)</td>
+</tr>
+<tr>
+<td><code>10.3.64.0/22</code></td>
+<td>local</td>
+</tr>
+</tbody>
+</table>
+<p>The final hop before the public internet.</p>
+<h3 id="route-table-anomaly-az-1a-is-effectively-bypassed">Route table anomaly — AZ 1a is effectively bypassed</h3>
+<p><code>spoke-rt-1a</code> and <code>firewall-rt-1a</code> both exist in CloudFormation but are <strong>not
+associated with any subnet</strong>. Both spoke subnets and both firewall subnets use the
+<code>1b</code> route tables, meaning:</p>
+<ul>
+<li>All traffic (regardless of source AZ) routes through firewall endpoint <code>1b</code> and NAT GW <code>1b</code></li>
+<li>AZ 1a's firewall endpoint (<code>vpce-065568da4cfe1d602</code>) and NAT Gateway (<code>001-nat-1a</code>) receive no traffic</li>
+<li>You are paying for <code>001-nat-1a</code> and its Elastic IP (<code>001-eip-1a</code>) for zero benefit</li>
+<li>If AZ 1b goes down, there is <strong>no automatic failover</strong> to AZ 1a</li>
+</ul>
+<p>This is likely a CDK deployment issue where the 1a route tables were created but the
+subnet associations were not applied correctly.</p>
+<hr />
+<h2 id="network-acl">Network ACL</h2>
+<p>One default NACL — <code>acl-0833042dd260ca851</code> — is applied to all six subnets.</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Rule</th>
+<th>Traffic</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inbound</td>
+<td>100</td>
+<td>All protocols</td>
+<td><strong>Allow</strong></td>
+</tr>
+<tr>
+<td>Inbound</td>
+<td>32767</td>
+<td>All protocols</td>
+<td>Deny (default)</td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>100</td>
+<td>All protocols</td>
+<td><strong>Allow</strong></td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>32767</td>
+<td>All protocols</td>
+<td>Deny (default)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why fully open?</strong> NACLs are stateless — they must explicitly allow return traffic too,
+which makes fine-grained rules error-prone. In this architecture real access control
+happens at two other layers:</p>
+<ol>
+<li><strong>Hub Network Firewall</strong> — org-wide egress/ingress policy</li>
+<li><strong>Security Groups</strong> — per-resource access rules (stateful)</li>
+</ol>
+<p>The NACL is intentionally left open to avoid duplication and breakage.</p>
+<hr />
+<h2 id="security-groups">Security Groups</h2>
+<p>One security group exists — the default (<code>sg-0ad518583be2c8479</code>), auto-created with the VPC.</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inbound</td>
+<td>Allow from same security group only (self-reference)</td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>Allow all</td>
+</tr>
+</tbody>
+</table>
+<p>No custom security groups exist yet because <strong>no workloads have been deployed</strong>.
+When you deploy resources (EC2, RDS, ECS, etc.), create dedicated security groups
+per resource type with the minimum required ports.</p>
+<hr />
+<h2 id="what-is-not-present">What Is Not Present</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Present</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transit Gateway</td>
+<td>❌</td>
+<td>Hub uses cross-account GWLB endpoints — no TGW needed</td>
+</tr>
+<tr>
+<td>VPC Peering</td>
+<td>❌</td>
+<td>No peer VPCs in this account</td>
+</tr>
+<tr>
+<td>Custom NACLs</td>
+<td>❌</td>
+<td>Default kept open; firewall + SGs handle access control</td>
+</tr>
+<tr>
+<td>Custom Security Groups</td>
+<td>❌</td>
+<td>No workloads deployed yet</td>
+</tr>
+<tr>
+<td>VPN / Direct Connect</td>
+<td>❌</td>
+<td>No on-premises connectivity</td>
+</tr>
+<tr>
+<td>Local Network Firewall</td>
+<td>❌</td>
+<td>Inspection is centralized in the hub account</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="full-egress-ingress-flow">Full Egress + Ingress Flow</h2>
+<pre><code>EGRESS (outbound)
+─────────────────────────────────────────────────────────
+Workload  (spoke subnet — 10.3.65.0/24 or 10.3.66.0/24)
+  ↓  route: 0.0.0.0/0 → vpce-063335608106cb20a
+GWLB endpoint  (firewallSubnet — 10.3.64.0/27 or 10.3.64.32/27)
+  ↓  forwarded cross-account
+RootHub-inspection-firewall  (hub account)
+  ↓  approved — packet returned to firewall subnet
+GWLB endpoint  (firewall subnet)
+  ↓  route: 0.0.0.0/0 → nat-0fc371e4278247404
+NAT Gateway  (natSubnet — 10.3.67.0/27 or 10.3.67.32/27)
+             swaps private IP → Elastic IP
+  ↓  route: 0.0.0.0/0 → igw-0d54a13bd04e6242e
+Internet Gateway → Internet
+
+
+INGRESS (inbound reply)
+─────────────────────────────────────────────────────────
+Internet → Internet Gateway
+  ↓  IGW route table: 10.3.65.0/24 → vpce-065568da4cfe1d602
+                      10.3.66.0/24 → vpce-063335608106cb20a
+GWLB endpoint  (firewall subnet)
+  ↓  forwarded cross-account
+RootHub-inspection-firewall  (hub account)
+  ↓  approved — packet returned
+GWLB endpoint  (firewall subnet)
+  ↓  delivered to destination
+Workload  (spoke subnet)
+</code></pre>
+<p>Both directions pass through the hub firewall — no packet bypasses inspection.</p>
+<hr />
+<h2 id="what-is-a-gateway-load-balancer-endpoint">What Is a Gateway Load Balancer Endpoint?</h2>
+<p>The GWLB endpoint is the most unusual component in this VPC — it looks like a route table entry but it is actually a <strong>transparent network doorway into another AWS account</strong>.</p>
+<h3 id="the-two-players">The two players</h3>
+<pre><code>Your account (spoke)               Hub account (security team)
+────────────────────               ───────────────────────────
+GWLB Endpoint                      Gateway Load Balancer (GWLB)
+vpce-063335608106cb20a   ←──────→  + Firewall appliances (EC2s running inspection software)
+  IP: 10.3.64.42
+  Subnet: firewallSubnet2
+</code></pre>
+<p>Your account owns the <strong>endpoint</strong> — just a network interface sitting in <code>firewallSubnet2</code>. The hub security account owns the actual <strong>load balancer and firewall VMs</strong> that do the inspection. You cannot see or modify the firewall rules from your account.</p>
+<h3 id="what-happens-inside-when-a-packet-hits-the-endpoint">What happens inside when a packet hits the endpoint</h3>
+<pre><code>1. Packet arrives at GWLB endpoint (10.3.64.42)
+
+2. Endpoint wraps the packet in a GENEVE tunnel
+   (GENEVE puts your original packet inside a new outer packet)
+
+3. Wrapped packet is sent cross-account to the GWLB in the hub
+
+4. GWLB picks a firewall appliance and delivers it
+
+5. Firewall unwraps and inspects the original packet
+   — checks rules: allowed destination? allowed protocol?
+   — if approved → wraps it back and returns it through the tunnel
+
+6. GWLB endpoint receives the packet back and forwards it to the next hop
+</code></pre>
+<p>The original packet is <strong>completely unchanged</strong> throughout — source IP, destination IP, port, protocol. The GENEVE tunnel is invisible to both the sender and the receiver. It is as if the packet passed through a transparent wall that happened to have a security guard examining it.</p>
+<h3 id="why-gwlb-instead-of-a-simpler-approach">Why GWLB instead of a simpler approach</h3>
+<p>The firewall needs to see the <strong>real</strong> source and destination IPs to apply meaningful rules. Older approaches (like routing through a proxy) rewrote the packet headers, which broke rule matching.</p>
+<pre><code>Old way (proxy):
+  EC2 → Firewall proxy → Internet
+  Firewall sees source = proxy IP   ← cannot write rules per workload
+
+GWLB way:
+  EC2 → GWLB endpoint → [GENEVE tunnel] → Firewall → Internet
+  Firewall sees source = real EC2 IP ✅   destination = real destination ✅
+</code></pre>
+<p>GWLB preserves the original headers end-to-end, which is why AWS Network Firewall uses it for VPC traffic inspection.</p>
+<h3 id="this-endpoint-in-your-vpc">This endpoint in your VPC</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Endpoint ID</td>
+<td><code>vpce-063335608106cb20a</code></td>
+</tr>
+<tr>
+<td>Private IP</td>
+<td><code>10.3.64.42</code></td>
+</tr>
+<tr>
+<td>Subnet</td>
+<td><code>firewallSubnet2</code> (<code>subnet-084b04815d14b2834</code>)</td>
+</tr>
+<tr>
+<td>Service</td>
+<td><code>com.amazonaws.vpce.il-central-1.vpce-svc-097b9b80cda8975a8</code></td>
+</tr>
+<tr>
+<td>Owner</td>
+<td>Hub security account (not your account)</td>
+</tr>
+<tr>
+<td>Type</td>
+<td><code>GatewayLoadBalancer</code> — packets pass <em>through</em> it, not <em>to</em> it</td>
+</tr>
+</tbody>
+</table>
+<p>You do not manage, configure, or pay for the firewall rules. The endpoint itself is auto-created by AWS when the hub account associates its Network Firewall with your VPC.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
