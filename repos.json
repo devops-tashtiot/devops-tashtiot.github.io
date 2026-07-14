@@ -8,7 +8,7 @@
         {
           "name": "rhdh-templates",
           "url": "https://github.com/devops-tashtiot/rhdh-templates",
-          "icon": "📋",
+          "icon": "\ud83d\udccb",
           "description": "RHDH scaffolder templates for bootstrapping new services via the internal developer portal.",
           "tags": [
             "RHDH",
@@ -19,8 +19,8 @@
         },
         {
           "name": "devops-api",
-          "url": "https://github.com/devops-tashtiot/devops-api/blob/main/README.md",
-          "icon": "⚡",
+          "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
+          "icon": "\u26a1",
           "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket.",
           "tags": [
             "Python",
@@ -34,7 +34,7 @@
         {
           "name": "apis-library",
           "url": "https://github.com/Platform-Infra-Org/apis-library",
-          "icon": "📦",
+          "icon": "\ud83d\udce6",
           "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
           "tags": [
             "Python",
@@ -56,7 +56,7 @@
             {
               "name": "aws-terraform-bootstrap",
               "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
-              "icon": "🏗️",
+              "icon": "\ud83c\udfd7\ufe0f",
               "description": "One-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects.",
               "tags": [
                 "Terraform",
@@ -73,7 +73,7 @@
             {
               "name": "aws-xray-db-sync",
               "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
-              "icon": "🔄",
+              "icon": "\ud83d\udd04",
               "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure.",
               "tags": [
                 "AWS Lambda",
@@ -86,8 +86,8 @@
             {
               "name": "devtools-labs",
               "url": "https://devops-tashtiot.github.io/devtools-labs/",
-              "icon": "🧰",
-              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform — Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
+              "icon": "\ud83e\uddf0",
+              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform \u2014 Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
               "tags": [
                 "Terraform",
                 "Terragrunt",
