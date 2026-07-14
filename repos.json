@@ -18,20 +18,22 @@
           ]
         },
         {
-          "name": "example-api",
-          "url": "https://github.com/devops-tashtiot/example-api",
+          "name": "devops-api",
+          "url": "https://github.com/devops-tashtiot/devops-api/blob/main/README.md",
           "icon": "⚡",
-          "description": "FastAPI reference template with DNS and FQDN endpoints — the starting point for new platform APIs.",
+          "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket.",
           "tags": [
             "Python",
             "FastAPI",
-            "Template",
-            "DNS"
+            "AWX",
+            "ArgoCD",
+            "Vault",
+            "Bitbucket"
           ]
         },
         {
           "name": "apis-library",
-          "url": "https://github.com/devops-tashtiot/apis-library",
+          "url": "https://github.com/Platform-Infra-Org/apis-library",
           "icon": "📦",
           "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
           "tags": [
@@ -80,52 +82,20 @@
                 "Terraform",
                 "Terragrunt"
               ]
+            },
+            {
+              "name": "devtools-labs",
+              "url": "https://devops-tashtiot.github.io/devtools-labs/",
+              "icon": "🧰",
+              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform — Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
+              "tags": [
+                "Terraform",
+                "Terragrunt",
+                "Minikube",
+                "ArgoCD",
+                "GitOps"
+              ]
             }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Lessons Learned",
-      "repos": [
-        {
-          "name": "SCP blocks ALB/NLB → Cloudflare Tunnel",
-          "url": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
-          "icon": "🌐",
-          "description": "An SCP pushed down from the Control Tower management account denies elasticloadbalancing:CreateLoadBalancer in member accounts, so provisioning an ALB/NLB fails outright. Workaround: skip the load balancer entirely and expose the service via a Cloudflare Tunnel — it also hands you free DNS and a managed TLS certificate, without opening any inbound ports.",
-          "tags": [
-            "SCP",
-            "Control Tower",
-            "Cloudflare",
-            "Tunnel",
-            "DNS",
-            "TLS"
-          ]
-        },
-        {
-          "name": "SCP blocks IAM OIDC Identity Provider",
-          "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html",
-          "icon": "🔑",
-          "description": "An SCP pushed down from the Control Tower management account denies iam:CreateOpenIDConnectProvider in member accounts, blocking OIDC federation (e.g. for GitHub Actions) at the account level — the identity provider has to be created from the management account instead, since no IAM policy change inside the member account can override an SCP.",
-          "tags": [
-            "SCP",
-            "Control Tower",
-            "IAM",
-            "OIDC",
-            "GitHub Actions"
-          ]
-        },
-        {
-          "name": "SCP blocks Route53 CreateHostedZone",
-          "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-private.html",
-          "icon": "🧭",
-          "description": "An SCP pushed down from the Control Tower management account denies route53:CreateHostedZone in member accounts, so a private hosted zone for internal DNS (e.g. giving an EC2 instance a stable name that survives replacement) fails outright — no IAM policy inside the member account can override an SCP explicit deny. Workaround: have Terraform publish the dynamic value (e.g. the instance's private IP) to an SSM Parameter Store parameter on every apply, and have consumers read it from SSM instead of resolving a DNS name.",
-          "tags": [
-            "SCP",
-            "Control Tower",
-            "Route53",
-            "DNS",
-            "SSM Parameter Store"
           ]
         }
       ]
