@@ -8,7 +8,7 @@
         {
           "name": "rhdh-templates",
           "url": "https://github.com/devops-tashtiot/rhdh-templates",
-          "icon": "\ud83d\udccb",
+          "icon": "📋",
           "description": "RHDH scaffolder templates for bootstrapping new services via the internal developer portal.",
           "tags": [
             "RHDH",
@@ -20,7 +20,7 @@
         {
           "name": "devops-api",
           "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
-          "icon": "\u26a1",
+          "icon": "⚡",
           "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket.",
           "tags": [
             "Python",
@@ -34,7 +34,7 @@
         {
           "name": "apis-library",
           "url": "https://github.com/Platform-Infra-Org/apis-library",
-          "icon": "\ud83d\udce6",
+          "icon": "📦",
           "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
           "tags": [
             "Python",
@@ -56,13 +56,25 @@
             {
               "name": "aws-terraform-bootstrap",
               "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
-              "icon": "\ud83c\udfd7\ufe0f",
+              "icon": "🏗️",
               "description": "One-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects.",
               "tags": [
                 "Terraform",
                 "S3",
                 "Remote State",
                 "Bootstrap"
+              ]
+            },
+            {
+              "name": "minikube-ami",
+              "url": "https://github.com/devops-tashtiot/minikube-ami",
+              "icon": "💿",
+              "description": "Packer template building the golden AMI for the devtools-labs Minikube EC2 instance — Docker, kubectl, Helm, and Minikube pre-installed.",
+              "tags": [
+                "Packer",
+                "AMI",
+                "Minikube",
+                "Docker"
               ]
             }
           ]
@@ -73,7 +85,7 @@
             {
               "name": "aws-xray-db-sync",
               "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
-              "icon": "\ud83d\udd04",
+              "icon": "🔄",
               "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure.",
               "tags": [
                 "AWS Lambda",
@@ -86,8 +98,8 @@
             {
               "name": "devtools-labs",
               "url": "https://devops-tashtiot.github.io/devtools-labs/",
-              "icon": "\ud83e\uddf0",
-              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform \u2014 Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
+              "icon": "🧰",
+              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform — Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
               "tags": [
                 "Terraform",
                 "Terragrunt",
