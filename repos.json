@@ -48,98 +48,16 @@
       ]
     },
     {
-      "name": "Devtools Env",
-      "subsections": [
-        {
-          "name": "Infra",
-          "repos": [
-            {
-              "name": "devtools-labs",
-              "url": "https://devops-tashtiot.github.io/devtools-labs/",
-              "icon": "🧰",
-              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform — Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
-              "tags": [
-                "Terraform",
-                "Terragrunt",
-                "Minikube",
-                "ArgoCD",
-                "GitOps"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "Cluster Infra",
-          "repos": [
-            {
-              "name": "clusters-provision",
-              "url": "https://github.com/devops-tashtiot/clusters-provision",
-              "icon": "🌐",
-              "description": "ArgoCD umbrella Helm charts for shared cluster infrastructure — ingress-nginx, cloudflared, external-secrets-operator.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "ingress-nginx",
-                "cloudflared"
-              ]
-            },
-            {
-              "name": "clusters-definition",
-              "url": "https://github.com/devops-tashtiot/clusters-definition",
-              "icon": "🔧",
-              "description": "Environment-specific Helm values overrides for shared cluster infrastructure, plus the ApplicationSet that auto-discovers each tool.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "ApplicationSet",
-                "Values"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "Devtools",
-          "repos": [
-            {
-              "name": "devtools-provision",
-              "url": "https://github.com/devops-tashtiot/devtools-provision",
-              "icon": "🧩",
-              "description": "ArgoCD umbrella Helm charts for end-user devtools — Jira, Bitbucket, Confluence, Artifactory, ArgoCD.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "Jira",
-                "Bitbucket",
-                "Confluence"
-              ]
-            },
-            {
-              "name": "devtools-definition",
-              "url": "https://github.com/devops-tashtiot/devtools-definition",
-              "icon": "🗂️",
-              "description": "Environment-specific Helm values overrides for devtools provisioning, plus the ApplicationSet that auto-discovers each tool.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "ApplicationSet",
-                "Values"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
       "name": "AWS",
       "subsections": [
         {
-          "name": "Bootstrap",
+          "name": "Bootstrap — run first",
           "repos": [
             {
               "name": "aws-terraform-bootstrap",
               "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
               "icon": "🏗️",
-              "description": "One-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects.",
+              "description": "Step 1, once per AWS account: one-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects — must exist before devtools-labs can apply.",
               "tags": [
                 "Terraform",
                 "S3",
@@ -151,7 +69,7 @@
               "name": "minikube-ami",
               "url": "https://github.com/devops-tashtiot/minikube-ami",
               "icon": "💿",
-              "description": "Packer template building the golden AMI for the devtools-labs Minikube EC2 instance — Docker, kubectl, Helm, and Minikube pre-installed.",
+              "description": "Step 2, once per AWS account: Packer template building the golden AMI for the devtools-labs Minikube EC2 instance — Docker, kubectl, Helm, and Minikube pre-installed. Must exist before devtools-labs's minikube unit can apply.",
               "tags": [
                 "Packer",
                 "AMI",
@@ -175,6 +93,88 @@
                 "S3",
                 "Terraform",
                 "Terragrunt"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Devtools Env",
+      "subsections": [
+        {
+          "name": "Infra",
+          "repos": [
+            {
+              "name": "devtools-labs",
+              "url": "https://devops-tashtiot.github.io/devtools-labs/",
+              "icon": "🧰",
+              "description": "Step 3: Terraform + Terragrunt that bootstraps Minikube + ArgoCD. From there, ArgoCD automatically deploys everything in Cluster Infra and Devtools below — those charts are never applied by hand.",
+              "tags": [
+                "Terraform",
+                "Terragrunt",
+                "Minikube",
+                "ArgoCD",
+                "GitOps"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Cluster Infra",
+          "repos": [
+            {
+              "name": "clusters-provision",
+              "url": "https://github.com/devops-tashtiot/clusters-provision",
+              "icon": "🌐",
+              "description": "ArgoCD umbrella Helm charts for shared cluster infrastructure — ingress-nginx, cloudflared, external-secrets-operator. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "ingress-nginx",
+                "cloudflared"
+              ]
+            },
+            {
+              "name": "clusters-definition",
+              "url": "https://github.com/devops-tashtiot/clusters-definition",
+              "icon": "🔧",
+              "description": "Environment-specific Helm values overrides for shared cluster infrastructure, plus the ApplicationSet that auto-discovers each tool. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "ApplicationSet",
+                "Values"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Devtools",
+          "repos": [
+            {
+              "name": "devtools-provision",
+              "url": "https://github.com/devops-tashtiot/devtools-provision",
+              "icon": "🧩",
+              "description": "ArgoCD umbrella Helm charts for end-user devtools — Jira, Bitbucket, Confluence, Artifactory, ArgoCD. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "Jira",
+                "Bitbucket",
+                "Confluence"
+              ]
+            },
+            {
+              "name": "devtools-definition",
+              "url": "https://github.com/devops-tashtiot/devtools-definition",
+              "icon": "🗂️",
+              "description": "Environment-specific Helm values overrides for devtools provisioning, plus the ApplicationSet that auto-discovers each tool. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
+              "tags": [
+                "Helm",
+                "ArgoCD",
+                "ApplicationSet",
+                "Values"
               ]
             }
           ]
