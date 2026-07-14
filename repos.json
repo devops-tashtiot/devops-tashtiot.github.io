@@ -48,8 +48,26 @@
       ]
     },
     {
-      "name": "GitOps Platform",
+      "name": "Devtools Env",
       "subsections": [
+        {
+          "name": "Infra",
+          "repos": [
+            {
+              "name": "devtools-labs",
+              "url": "https://devops-tashtiot.github.io/devtools-labs/",
+              "icon": "🧰",
+              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform — Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
+              "tags": [
+                "Terraform",
+                "Terragrunt",
+                "Minikube",
+                "ArgoCD",
+                "GitOps"
+              ]
+            }
+          ]
+        },
         {
           "name": "Cluster Infra",
           "repos": [
@@ -157,19 +175,6 @@
                 "S3",
                 "Terraform",
                 "Terragrunt"
-              ]
-            },
-            {
-              "name": "devtools-labs",
-              "url": "https://devops-tashtiot.github.io/devtools-labs/",
-              "icon": "🧰",
-              "description": "Terraform + Terragrunt infra for the self-hosted devtools platform — Minikube with ArgoCD bootstrapped inside it, RDS, and an AD domain controller.",
-              "tags": [
-                "Terraform",
-                "Terragrunt",
-                "Minikube",
-                "ArgoCD",
-                "GitOps"
               ]
             }
           ]
