@@ -101,82 +101,18 @@
     },
     {
       "name": "Devtools Env",
-      "subsections": [
+      "repos": [
         {
-          "name": "Infra",
-          "repos": [
-            {
-              "name": "devtools-labs",
-              "url": "https://devops-tashtiot.github.io/devtools-labs/",
-              "icon": "🧰",
-              "description": "Step 3: Terraform + Terragrunt that bootstraps Minikube + ArgoCD. From there, ArgoCD automatically deploys everything in Cluster Infra and Devtools below — those charts are never applied by hand.",
-              "tags": [
-                "Terraform",
-                "Terragrunt",
-                "Minikube",
-                "ArgoCD",
-                "GitOps"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "Cluster Infra",
-          "repos": [
-            {
-              "name": "clusters-provision",
-              "url": "https://github.com/devops-tashtiot/clusters-provision",
-              "icon": "🌐",
-              "description": "ArgoCD umbrella Helm charts for shared cluster infrastructure — ingress-nginx, cloudflared, external-secrets-operator. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "ingress-nginx",
-                "cloudflared"
-              ]
-            },
-            {
-              "name": "clusters-definition",
-              "url": "https://github.com/devops-tashtiot/clusters-definition",
-              "icon": "🔧",
-              "description": "Environment-specific Helm values overrides for shared cluster infrastructure, plus the ApplicationSet that auto-discovers each tool. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "ApplicationSet",
-                "Values"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "Devtools",
-          "repos": [
-            {
-              "name": "devtools-provision",
-              "url": "https://github.com/devops-tashtiot/devtools-provision",
-              "icon": "🧩",
-              "description": "ArgoCD umbrella Helm charts for end-user devtools — Jira, Bitbucket, Confluence, Artifactory, ArgoCD. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "Jira",
-                "Bitbucket",
-                "Confluence"
-              ]
-            },
-            {
-              "name": "devtools-definition",
-              "url": "https://github.com/devops-tashtiot/devtools-definition",
-              "icon": "🗂️",
-              "description": "Environment-specific Helm values overrides for devtools provisioning, plus the ApplicationSet that auto-discovers each tool. Deployed automatically by devtools-labs's ArgoCD bootstrap — not applied manually.",
-              "tags": [
-                "Helm",
-                "ArgoCD",
-                "ApplicationSet",
-                "Values"
-              ]
-            }
+          "name": "devtools-labs",
+          "url": "https://devops-tashtiot.github.io/devtools-labs/",
+          "icon": "🧰",
+          "description": "Step 3: Terraform + Terragrunt that bootstraps Minikube + ArgoCD. From there, ArgoCD's ApplicationSets auto-discover and auto-sync every cluster-infra tool and devtool (ingress, secrets sync, tunnel, Jira, Bitbucket, Confluence, Artifactory, ArgoCD) — none of it is ever applied by hand.",
+          "tags": [
+            "Terraform",
+            "Terragrunt",
+            "Minikube",
+            "ArgoCD",
+            "GitOps"
           ]
         }
       ]
