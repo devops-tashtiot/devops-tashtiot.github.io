@@ -83,6 +83,13 @@ All human access roles (`AWSReservedSSO_*`) are defined centrally in IAM Identit
 - Removing an engineer → revoke in one place → access disappears everywhere
 - No standing IAM users exist in member accounts
 
+> **Checking Identity Center's sync with its external identity source (directory/SCIM) is
+> console-only in this setup.** An SCP denies `identitystore:ListUsers` (and
+> `sso-directory:ListUsers`/`SearchUsers`) from member-account roles, so you cannot query
+> provisioned users or sync status via the AWS CLI/API from a workload account — only from
+> the Identity Center console itself (**Settings → Identity source → Provisioning**), which
+> runs in the management account context. See the restriction table below.
+
 ---
 
 ## What You Can and Cannot Do
@@ -94,6 +101,19 @@ All human access roles (`AWSReservedSSO_*`) are defined centrally in IAM Identit
 | Disable CloudTrail | No (blocked by SCP) | Org-wide compliance requirement |
 | Create new IAM roles | Yes | Within the permissions of your SSO role |
 | Provision resources in `il-central-1` | Yes | Approved region for this account |
+| List Identity Center users via CLI/API (`identitystore:ListUsers`) | No (blocked by SCP) | Directory/SCIM sync status must be checked in the console instead |
+
+---
+
+## Known SCP Restrictions Discovered
+
+A running list of SCP-denied API calls found while working in this account, so nobody re-attempts
+the same blocked approach later without checking here first. The full "Lessons Learned" list
+(with workarounds, where one exists) also lives on the [homepage](https://devops-tashtiot.github.io/).
+
+| Denied action | What it blocks | Workaround |
+|---|---|---|
+| `identitystore:ListUsers`, `sso-directory:ListUsers`/`SearchUsers` | Inspecting IAM Identity Center's provisioned users or its sync status with an external identity source from a workload-account role | None via CLI/API — check in the Identity Center console (**Settings → Identity source → Provisioning**) instead |
 
 ---
 
