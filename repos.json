@@ -116,6 +116,23 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Lessons Learned",
+      "repos": [
+        {
+          "name": "SCP blocks Identity Center directory/user listing",
+          "url": "",
+          "icon": "🔐",
+          "description": "An SCP pushed down from the Control Tower management account denies identitystore:ListUsers (and sso-directory:ListUsers/SearchUsers) in member accounts, so IAM Identity Center's provisioned users and SCIM sync status with the external identity source can't be inspected via the AWS CLI/API.",
+          "tags": [
+            "SCP",
+            "Control Tower",
+            "IAM Identity Center",
+            "SSO"
+          ]
+        }
+      ]
     }
   ]
 }
