@@ -31,3 +31,5 @@ nav:
     - IRSA Pod Identity: aws/irsa-pod-identity.md
     - IAM Roles: aws/iam-roles.md
     - Control Tower: aws/control-tower.md
+  - Platform:
+    - Cloudflare Architecture: platform/cloudflare-architecture.md
