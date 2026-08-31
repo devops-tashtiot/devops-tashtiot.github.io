@@ -59,7 +59,7 @@ happened to pass an earlier read-only check.
 |---|---|
 | **Policy ID** | `p-cf140vwn` |
 | **Allowed regions** | `il-central-1` (this account's home region) and `us-east-1` |
-| **Denied actions** | Confirmed on `ec2:DescribeSubnets`, `rds:DescribeDBInstances`, `lambda:ListFunctions`, `s3:ListAllMyBuckets` — even plain reads — the moment the request targets any region **other than those two** (tested and denied: `us-west-2`, `ap-southeast-2`, `eu-central-1`, `ap-south-1`) |
+| **Denied actions** | Confirmed on `ec2:DescribeSubnets`, `rds:DescribeDBInstances`, `lambda:ListFunctions`, `s3:ListAllMyBuckets` — even plain reads — the moment the request targets any region **other than those two** (tested and denied: `us-west-2`, `ap-southeast-2`, `eu-central-1`, `ap-south-1`, `eu-west-1`, `ap-northeast-1`, `ca-central-1` — seven regions checked, all denied, confirming the allowlist is exactly `{il-central-1, us-east-1}` and not a longer list) |
 | **Exempted (in addition to the two allowed regions)** | IAM (`iam:ListRoles` succeeded regardless of region) — consistent with IAM being a global control-plane service. STS/Organizations are very likely exempted the same way, though not directly tested. |
 | **Symptom** | `UnauthorizedOperation`/`AccessDenied` with "explicit deny in a service control policy," even for read-only calls |
 | **Workaround** | None. Stay in `il-central-1` for anything regional. This is also why this account's [enabled-regions list](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html) being long (18 regions) doesn't mean those regions are actually usable from this workload account — enabled and permitted are different things. |
@@ -107,12 +107,15 @@ Same practical effect as the previous section, one level down, and the same two-
 carving up the *existing* VPC further, or adding new routing, is blocked — and so is deleting an
 existing subnet.
 
-### No new VPC peering or VPC endpoints
+### No new VPC peering or VPC endpoints — and no deleting the existing endpoint either
 
 | Denied action | Policy ID |
 |---|---|
 | `ec2:CreateVpcPeeringConnection` | `p-uya91w09` |
-| `ec2:CreateVpcEndpoint` | `p-uya91w09` |
+| `ec2:CreateVpcEndpoint` / `ec2:DeleteVpcEndpoints` | `p-uya91w09` |
+
+The existing shared VPC endpoint this whole platform's egress depends on can't be deleted either
+— same two-way lock pattern as the VPC/subnet/NAT Gateway restrictions above.
 
 ### Public sharing of AMIs and snapshots is blocked
 
@@ -158,6 +161,11 @@ and returned `DryRunOperation` (permitted):
 - `ec2:CopySnapshot` with a destination region of `us-east-1` — expected, given `us-east-1` is a
   fully allowed region (see the region-lock correction above), but confirms cross-region data
   replication into it specifically works, not just plain resource access.
+- `ec2:ReleaseAddress` (releasing an *existing* Elastic IP) — asymmetric with
+  `ec2:AllocateAddress` (a new one) being denied: this account can free up EIP usage but can't
+  acquire more.
+- `ssm:PutParameter` with `--tier Advanced` (the paid tier) — no cost-control guardrail found;
+  tested by creating and immediately deleting one, no charge incurred.
 
 ### No standing IAM users (`iam:CreateUser`)
 
