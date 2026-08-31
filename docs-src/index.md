@@ -12,3 +12,4 @@ Infrastructure, automation, and platform tooling documentation.
 | [IAM Roles](aws/iam-roles.md) | All IAM roles in the workload account grouped by purpose: SSO, Control Tower, EKS, automation, and service-linked roles |
 | [Control Tower](aws/control-tower.md) | How AWS Control Tower governs multi-account environments via SCPs, StackSets, and IAM role deployment |
 | [SCP Limitations](aws/scp-limitations.md) | Every Service Control Policy restriction discovered while working in this account, with symptoms and workarounds |
+| [Governance Anomalies](aws/anomalies.md) | Actions a security-conscious admin would expect to be restricted in this account, but verified are not — like deleting the Internet Gateway |
