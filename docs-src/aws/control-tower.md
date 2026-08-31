@@ -84,11 +84,17 @@ All human access roles (`AWSReservedSSO_*`) are defined centrally in IAM Identit
 - No standing IAM users exist in member accounts
 
 > **Checking Identity Center's sync with its external identity source (directory/SCIM) is
-> console-only in this setup.** An SCP denies `identitystore:ListUsers` (and
-> `sso-directory:ListUsers`/`SearchUsers`) from member-account roles, so you cannot query
-> provisioned users or sync status via the AWS CLI/API from a workload account — only from
-> the Identity Center console itself (**Settings → Identity source → Provisioning**), which
-> runs in the management account context. See the restriction table below.
+> console-only in this setup** — an SCP blocks querying provisioned users or sync status via
+> the AWS CLI/API from a workload account. See [SCP Limitations](scp-limitations.md) for the
+> full restriction and its console-only workaround.
+
+### Granting access day-to-day
+
+Day-to-day permission changes don't go through the Identity Center console/management-account
+path above — that's for structural changes to the SSO setup itself. To get a colleague access
+to something, they sign in to the AWS access portal ("myapps") and the request is handled by an
+admin account: admin-level SSO permission sets are held by each team/stack's lead, who grants
+permissions to their own team's members from there.
 
 ---
 
@@ -107,13 +113,8 @@ All human access roles (`AWSReservedSSO_*`) are defined centrally in IAM Identit
 
 ## Known SCP Restrictions Discovered
 
-A running list of SCP-denied API calls found while working in this account, so nobody re-attempts
-the same blocked approach later without checking here first. The full "Lessons Learned" list
-(with workarounds, where one exists) also lives on the [homepage](https://devops-tashtiot.github.io/).
-
-| Denied action | What it blocks | Workaround |
-|---|---|---|
-| `identitystore:ListUsers`, `sso-directory:ListUsers`/`SearchUsers` | Inspecting IAM Identity Center's provisioned users or its sync status with an external identity source from a workload-account role | None via CLI/API — check in the Identity Center console (**Settings → Identity source → Provisioning**) instead |
+See [SCP Limitations](scp-limitations.md) for the full, dedicated reference of SCP-denied API
+calls found while working in this account.
 
 ---
 
@@ -121,3 +122,4 @@ the same blocked approach later without checking here first. The full "Lessons L
 
 - [IAM Roles](iam-roles.md) — full list of roles deployed in this account and their purpose
 - [VPC Architecture](vpc-architecture.md) — network guardrails enforced at the hub level
+- [SCP Limitations](scp-limitations.md) — every SCP restriction discovered in this account
