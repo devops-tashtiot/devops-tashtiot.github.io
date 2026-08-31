@@ -56,19 +56,6 @@ misconfiguration that falls outside what an SCP happens to cover (like the IGW d
 above). If detective monitoring exists for this org, it isn't visible or running from this
 account.
 
-## Wide-open SSH ingress (`0.0.0.0/0:22`) is not blocked
-
-Authorizing a security group rule allowing SSH from anywhere returned `DryRunOperation`
-(permitted). No SCP-level guardrail against permissive security group rules exists — a common
-Control Tower/CIS-benchmark-style guardrail in other Landing Zone setups, absent here. (A Config
-rule could still flag this *after the fact*, but per the previous section, no Config Rules are
-actually attached to this account either.)
-
-## Disabling account-wide default EBS encryption is not blocked
-
-`ec2:DisableEbsEncryptionByDefault` returned `DryRunOperation` (permitted) — no guardrail prevents
-turning off default-at-rest encryption for future EBS volumes account-wide.
-
 ## An idle NAT Gateway has been running unused for at least 7 days, and this account can't delete it
 
 This VPC has two NAT Gateways, one per AZ (`natSubnet1`/`natSubnet2` — part of the shared spoke
