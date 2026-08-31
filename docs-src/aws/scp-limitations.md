@@ -106,7 +106,18 @@ Gateway to pair it with, which is itself blocked), `ec2:CreateDhcpOptions`, `ec2
 
 That last one is a genuine surprise — this same policy also blocks creating an API Gateway REST
 API, not just EC2 networking primitives. Whatever this policy's actual scope is, it isn't limited
-to "VPC-adjacent" resources the way its other members suggested.
+to "VPC-adjacent" resources the way its other members suggested. Confirmed it's not REST-API-
+specific either: `apigatewayv2:CreateApi` (HTTP/WebSocket APIs) is denied by the same
+`p-wptrsvas` — the block covers API Gateway as a whole. AppSync (GraphQL APIs) is a separate
+service and is **not** covered by this or any other policy — tested by creating and immediately
+deleting one.
+
+**A related but distinct case — Global Accelerator**: `globalaccelerator:CreateAccelerator` is
+also denied, but by `p-cf140vwn` (the region-lock policy), not this one. Global Accelerator's API
+only exists in the `us-west-2` endpoint regardless of where you'd actually want the accelerator —
+and `us-west-2` isn't in this account's two allowed regions (`il-central-1`, `us-east-1`), so this
+is very likely collateral from the region lock rather than a deliberate "no Global Accelerator"
+rule.
 
 Same practical effect as the previous section, one level down, and the same two-way lock: even
 carving up the *existing* VPC further, or adding new routing, is blocked — and so is deleting an
@@ -177,8 +188,8 @@ and returned `DryRunOperation` (permitted):
   (Secrets Manager via `--force-delete-without-recovery`, bypassing its normal 7-30 day recovery
   window, so nothing lingered).
 - `ce:GetCostAndUsage` (Cost Explorer, read-only) — not restricted.
-- `dynamodb:CreateTable`, `wafv2:CreateWebACL` — both created for real and deleted
-  immediately after; not restricted.
+- `dynamodb:CreateTable`, `wafv2:CreateWebACL`, `appsync:CreateGraphqlApi` — all created for
+  real and deleted immediately after; not restricted.
 
 ### No standing IAM users (`iam:CreateUser`)
 
