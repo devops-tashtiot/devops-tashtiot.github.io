@@ -166,6 +166,12 @@ and returned `DryRunOperation` (permitted):
   acquire more.
 - `ssm:PutParameter` with `--tier Advanced` (the paid tier) — no cost-control guardrail found;
   tested by creating and immediately deleting one, no charge incurred.
+- `sns:CreateTopic`, `sqs:CreateQueue`, `cloudwatch:PutMetricAlarm`,
+  `secretsmanager:CreateSecret` — none of these non-EC2 services (which don't support
+  `--dry-run`) are SCP-restricted either; each was created for real and deleted immediately after
+  (Secrets Manager via `--force-delete-without-recovery`, bypassing its normal 7-30 day recovery
+  window, so nothing lingered).
+- `ce:GetCostAndUsage` (Cost Explorer, read-only) — not restricted.
 
 ### No standing IAM users (`iam:CreateUser`)
 
