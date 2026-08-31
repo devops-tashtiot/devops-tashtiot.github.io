@@ -69,6 +69,27 @@ actually attached to this account either.)
 `ec2:DisableEbsEncryptionByDefault` returned `DryRunOperation` (permitted) — no guardrail prevents
 turning off default-at-rest encryption for future EBS volumes account-wide.
 
+## An idle NAT Gateway has been running unused for at least 7 days, and this account can't delete it
+
+This VPC has two NAT Gateways, one per AZ (`natSubnet1`/`natSubnet2` — part of the shared spoke
+network, not something `devtools-labs` created):
+
+| NAT Gateway | Subnet | Route table associations | Traffic (last 7 days) |
+|---|---|---|---|
+| `nat-0fc371e4278247404` | `natSubnet1` (`il-central-1a`) | 2 subnets | 16MB–599MB/day — actively used |
+| `nat-03d2ad88c6d3bcda9` | `natSubnet2` (`il-central-1b`) | **0 subnets** | **0 bytes every single day** |
+
+The second one's own route table (`rtb-0f4a9c7ec7f42af28`) has no subnet associated with it at
+all — nothing can route through it even if it wanted to — and CloudWatch confirms zero
+`BytesOutToDestination` for all 7 days checked. It's just running, billing per-hour (NAT Gateways
+bill hourly regardless of traffic), for nothing.
+
+**Why this is worse than ordinary waste**: per [SCP Limitations](scp-limitations.md),
+`ec2:DeleteNatGateway` is explicitly denied by policy `p-yb5x5s6s` — the same policy that blocks
+*creating* a new one. This workload account is structurally unable to clean this up itself, even
+though it's clearly and verifiably serving no purpose. Removing it requires the same
+management-account-level access that created it in the first place.
+
 ---
 
 ## Related Topics
