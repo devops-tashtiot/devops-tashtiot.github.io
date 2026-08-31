@@ -1,0 +1,78 @@
+# Governance Anomalies
+
+Things found while probing this account's [SCP Limitations](scp-limitations.md) that stood out as
+**surprising** — actions a security-conscious control-plane owner would typically expect to be
+locked down in a Control Tower-managed Landing Zone, but that this account's actual guardrails
+don't restrict. Every entry here was verified the same way as the SCP Limitations page (`--dry-run`
+where available, or a real create-and-immediately-clean-up test where it wasn't) — nothing here is
+speculative.
+
+This page isn't a criticism of a specific decision — some of these may be entirely intentional
+tradeoffs. It exists so nobody assumes a protection exists here that was never actually verified.
+
+---
+
+## `ec2:DeleteInternetGateway` is allowed, despite `ec2:CreateInternetGateway` being denied
+
+The clearest anomaly found. This account's network-topology lockdown (see the "No new
+internet-facing network egress/ingress points" entry on [SCP Limitations](scp-limitations.md))
+blocks creating a *new* Internet Gateway, and — consistently — blocks *deleting* the existing VPC,
+subnets, NAT Gateway, and VPC endpoint. But `ec2:DetachInternetGateway` and
+`ec2:DeleteInternetGateway` on the account's one existing IGW both returned `DryRunOperation`
+(permitted), confirmed via `--dry-run` against the real, in-use IGW
+(`igw-0d54a13bd04e6242e`) — not a hypothetical one.
+
+**Why this is dangerous**: the IGW is the single resource this account's entire public internet
+reachability depends on. Every other network-topology guardrail on this page protects its
+resource from deletion symmetrically with its creation restriction — the IGW is the one exception.
+Anyone with this account's admin role could detach and delete it right now, severing all public
+connectivity for every resource in the VPC, and no SCP would stop them.
+
+**Expected**: given every sibling resource (VPC, subnet, NAT Gateway, VPC endpoint) is protected
+from deletion by the same policy family, the IGW would reasonably be expected to be covered too.
+
+## IAM privilege escalation via `AttachRolePolicy` is not blocked
+
+Confirmed by creating a throwaway role and attaching `AdministratorAccess` to it directly —
+succeeded, then cleaned up immediately. The "no standing IAM users" restriction
+([SCP Limitations](scp-limitations.md)) closes the *identity-creation* door, but nothing stops a
+role this account is otherwise allowed to create from being granted full administrator access.
+Whatever prevents this in practice is IAM permission scoping/process discipline on who can call
+`iam:CreateRole`/`iam:AttachRolePolicy`, not an SCP guardrail.
+
+## No detective controls back up the preventive SCPs
+
+Three separate checks, all read-only, all confirmed:
+
+- AWS Config's baseline recorder is actively recording — but **zero Config Rules** are attached to
+  this account (`describe-config-rules` returns an empty list).
+- **Zero GuardDuty detectors** exist in this account (`list-detectors` returns an empty list).
+- **No CloudFormation StackSets** are visible from this account, including a known Control Tower
+  guardrail StackSet name that returned `StackSetNotFoundException`.
+
+**Why this is notable**: the SCPs on [SCP Limitations](scp-limitations.md) are this account's
+*entire* verified preventive layer — there's no local compliance-monitoring layer to catch a
+misconfiguration that falls outside what an SCP happens to cover (like the IGW deletion gap
+above). If detective monitoring exists for this org, it isn't visible or running from this
+account.
+
+## Wide-open SSH ingress (`0.0.0.0/0:22`) is not blocked
+
+Authorizing a security group rule allowing SSH from anywhere returned `DryRunOperation`
+(permitted). No SCP-level guardrail against permissive security group rules exists — a common
+Control Tower/CIS-benchmark-style guardrail in other Landing Zone setups, absent here. (A Config
+rule could still flag this *after the fact*, but per the previous section, no Config Rules are
+actually attached to this account either.)
+
+## Disabling account-wide default EBS encryption is not blocked
+
+`ec2:DisableEbsEncryptionByDefault` returned `DryRunOperation` (permitted) — no guardrail prevents
+turning off default-at-rest encryption for future EBS volumes account-wide.
+
+---
+
+## Related Topics
+
+- [SCP Limitations](scp-limitations.md) — the full reference this page's findings were sourced
+  from, including everything confirmed *restricted*
+- [Control Tower](control-tower.md) — the governance model these SCPs are pushed down from
