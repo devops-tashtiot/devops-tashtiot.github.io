@@ -7,11 +7,16 @@ in this Control Tower-managed Landing Zone are pushed down from the management a
 (including full workload admins) cannot view or override an SCP; it just silently denies the
 underlying API call, regardless of the caller's own IAM permissions.
 
-Everything below the Identity Center entry was confirmed by direct, safe probing of this
-account — `ec2:*` calls with the `--dry-run` flag (which evaluates permissions/SCPs without ever
-executing the action), and for non-dry-run-capable calls, relying on the fact that an explicit
-deny stops the call before anything is created or read. No real resource was created and no
-region setting was permanently changed to produce these findings.
+Everything below the Identity Center entry was confirmed by direct probing of this account:
+`ec2:*` calls with the `--dry-run` flag (which evaluates permissions/SCPs without ever executing
+the action) wherever available; for non-dry-run-capable calls, relying on the fact that an
+explicit deny stops the call before anything is created or read; and for the one test needing a
+real resource (IAM role/policy attachment), creating a throwaway resource and deleting it
+immediately after confirming the result. No resource was left behind, and no region setting was
+permanently changed, to produce these findings. Riskier categories with no safe test method
+(load-balancer creation with real cost, CloudTrail/Config/GuardDuty disable actions where a false
+"allowed" would be a real security regression, KMS key creation where pending-deletion has a
+mandatory 7+ day minimum) were deliberately left untested rather than risked.
 
 ---
 
@@ -142,6 +147,33 @@ and returned `DryRunOperation` (permitted):
 | **Symptom** | `AccessDenied` with the same "explicit deny in a service control policy" marker |
 | **Why** | Matches the SSO model described in [Control Tower](control-tower.md) — all human access is meant to flow through IAM Identity Center roles pushed from the management account, not standing per-account IAM users |
 | **Workaround** | None — this is enforced by design. Use an Identity Center permission set instead. |
+
+### IAM privilege escalation is NOT blocked by an SCP
+
+Tested by creating a throwaway IAM role and attaching `AdministratorAccess` to it directly
+(`iam:CreateRole`, `iam:AttachRolePolicy`) — both succeeded, confirmed attached, then cleaned up
+immediately (`iam:DetachRolePolicy`, `iam:DeleteRole`). No SCP prevents a role created in this
+account from being granted full admin permissions. This is a real, meaningful gap compared to the
+"no standing IAM users" restriction above — the identity-creation door is closed, but nothing at
+the SCP layer stops privilege escalation on identities (roles) this account is otherwise allowed
+to create. Whatever prevents this in practice is a matter of IAM permission scoping/process
+discipline, not an SCP guardrail.
+
+### Governance model observations (read-only, no mutation attempted)
+
+A few things about how this account's guardrails actually work, discovered by direct read-only
+checks rather than testing an action:
+
+| Check | Result |
+|---|---|
+| AWS Config recorder | **Active and recording** — `aws-controltower-BaselineConfigRecorder`, last successful run today |
+| AWS Config Rules attached to this account | **Zero** (`describe-config-rules` returns an empty list) — the recorder captures resource history, but no local rule evaluation runs in this account; if Config-based guardrails exist for this org, they're evaluated centrally from the management/audit account, not visible here |
+| GuardDuty detectors in this account | **Zero** (`list-detectors` returns an empty list) — no GuardDuty detector exists in this account context |
+| CloudFormation StackSets | **None visible** — `list-stack-sets` returns empty, and a known Control Tower guardrail StackSet name (`AWSControlTowerBP-BASELINE-CONFIG`) returns `StackSetNotFoundException` from this account. Guardrail deployment machinery isn't visible from a member account, consistent with SCPs also being unreadable directly (see above) |
+
+**Takeaway**: this account's actual preventive controls are entirely the SCPs on this page —
+there's no locally-visible Config Rule or GuardDuty layer backing them up. Detective/compliance
+monitoring for this account, if any, happens centrally and isn't observable from here.
 
 ---
 
