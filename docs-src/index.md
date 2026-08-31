@@ -13,8 +13,8 @@ Infrastructure, automation, and platform tooling documentation.
 | [Control Tower](aws/control-tower.md) | How AWS Control Tower governs multi-account environments via SCPs, StackSets, and IAM role deployment |
 | [SCP Limitations](aws/scp-limitations.md) | Every Service Control Policy restriction discovered while working in this account, with symptoms and workarounds |
 
-## Platform
+## Horizon
 
 | Page | Description |
 |---|---|
-| [Cloudflare Architecture](platform/cloudflare-architecture.md) | How Cloudflare Access/Tunnel routes browser traffic vs. how CoreDNS routes in-cluster callers to the same EKS/RDS/EFS-backed devtools |
+| [Prebuilt Environment](horizon/prebuilt-environment.md) | What the Horizon Landing Zone provisions in this account before any devops-tashtiot work — the fixed VPC, governance model, and a dormant pre-existing OpenShift cluster |
