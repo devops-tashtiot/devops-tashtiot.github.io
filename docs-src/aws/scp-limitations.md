@@ -128,6 +128,9 @@ and returned `DryRunOperation` (permitted):
 - `ec2:DisableEbsEncryptionByDefault`
 - `ec2:DetachInternetGateway`, `ec2:DeleteInternetGateway` (on the existing IGW) — see the
   asymmetry noted above.
+- `ec2:CreateKeyPair`, `ec2:CreateLaunchTemplate`, `ec2:CreateVolume` (unattached EBS),
+  `ec2:ModifyInstanceMetadataOptions` (IMDSv2 enforcement) — no restrictions found on any of
+  these.
 
 ### No standing IAM users (`iam:CreateUser`)
 
