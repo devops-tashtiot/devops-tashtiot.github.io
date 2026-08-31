@@ -9,9 +9,9 @@ underlying API call, regardless of the caller's own IAM permissions.
 
 Everything below the Identity Center entry was confirmed by direct, safe probing of this
 account — `ec2:*` calls with the `--dry-run` flag (which evaluates permissions/SCPs without ever
-executing the action), and for the one non-dry-run-capable case (`iam:CreateUser`) relying on the
-fact that an explicit deny stops the call before anything is created. No real resource was
-created to produce these findings.
+executing the action), and for non-dry-run-capable calls, relying on the fact that an explicit
+deny stops the call before anything is created or read. No real resource was created and no
+region setting was permanently changed to produce these findings.
 
 ---
 
@@ -35,10 +35,17 @@ created to produce these findings.
 | **Symptom** | `AccessDeniedException: You don't have permissions to access this resource` |
 | **Workaround** | None from this account. This is exactly why the restrictions on this page were found by empirically probing individual actions with `--dry-run` rather than reading the policy documents themselves — nobody in a workload account can do the latter. |
 
-### Network topology is fully locked — no new VPC, subnet, gateway, peering, or endpoint
+### Region lock — almost everything is restricted to `il-central-1`
 
-Every action that would change this account's network topology is explicitly denied, across at
-least three distinct SCP policy IDs:
+| | |
+|---|---|
+| **Policy ID** | `p-cf140vwn` |
+| **Denied actions** | Confirmed on `ec2:DescribeSubnets`, `rds:DescribeDBInstances`, `lambda:ListFunctions`, `s3:ListAllMyBuckets` — even plain reads — the moment the request targets any region other than `il-central-1` |
+| **Exempted** | IAM (`iam:ListRoles` succeeded regardless of region) — consistent with IAM being a global control-plane service. STS/Organizations are very likely exempted the same way, though not directly tested. |
+| **Symptom** | `UnauthorizedOperation`/`AccessDenied` with "explicit deny in a service control policy," even for read-only calls |
+| **Workaround** | None. Stay in `il-central-1` for anything regional. This is also why this account's [enabled-regions list](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html) being long (18 regions) doesn't mean those regions are actually usable from this workload account — enabled and permitted are different things. |
+
+### No new internet-facing network egress/ingress points
 
 | Denied action | Policy ID |
 |---|---|
@@ -46,28 +53,55 @@ least three distinct SCP policy IDs:
 | `ec2:CreateInternetGateway` | `p-yb5x5s6s` |
 | `ec2:CreateNatGateway` | `p-yb5x5s6s` |
 | `ec2:CreateTransitGateway` | `p-yb5x5s6s` |
+| `ec2:CreateVpnGateway` | `p-yb5x5s6s` |
+| `ec2:CreateEgressOnlyInternetGateway` | `p-yb5x5s6s` |
+| `ec2:AllocateAddress` (new Elastic IP) | `p-yb5x5s6s` |
+
+**What this means in practice**: this account can never create a new path in or out of the VPC to
+the public internet, another VPC (via VPN), or acquire a new public IP. Every Terraform module
+here must reuse whatever egress path and IP allocations already exist. This is the actual,
+verified root cause behind `devtools-labs/terraform/modules/eks`'s design — reusing
+`spokeSubnet1`/`spokeSubnet2`, an existing shared VPC endpoint for `0.0.0.0/0` egress, and (for
+the NAT Gateway dry-run test used to confirm this) an already-allocated Elastic IP rather than a
+fresh one — confirmed here as a hard SCP restriction, not just a cost-driven choice.
+
+**Confirmed still allowed**, for contrast: `ec2:CreateCustomerGateway` (inert without a VPN
+Gateway to pair it with, which is itself blocked), `ec2:CreateDhcpOptions`, and
+`ec2:CreateFlowLogs` (security/observability tooling isn't restricted).
+
+### No new subnets or route tables
+
+| Denied action | Policy ID |
+|---|---|
 | `ec2:CreateSubnet` | `p-wptrsvas` |
+| `ec2:CreateRouteTable` | `p-wptrsvas` |
+
+Same practical effect as the previous section, one level down: even carving up the *existing* VPC
+further, or adding new routing, is blocked — not just adding new top-level network objects.
+
+### No new VPC peering or VPC endpoints
+
+| Denied action | Policy ID |
+|---|---|
 | `ec2:CreateVpcPeeringConnection` | `p-uya91w09` |
 | `ec2:CreateVpcEndpoint` | `p-uya91w09` |
 
-**What this means in practice**: any Terraform module in this account must reuse the existing
-VPC, subnets, and egress path — it can never provision its own. This is the actual, verified root
-cause behind `devtools-labs/terraform/modules/eks`'s design (reusing `spokeSubnet1`/
-`spokeSubnet2` and an existing shared VPC endpoint for `0.0.0.0/0` egress instead of creating a
-NAT Gateway or a new VPC) — confirmed here as a hard SCP restriction, not just a cost-driven
-choice.
+### Confirmed NOT restricted (tested, allowed)
 
-**Confirmed still allowed**, for contrast: `ec2:RunInstances` (plain instance launch into an
-existing subnet) and `ec2:CreateSecurityGroup` both returned `DryRunOperation` (i.e. permitted) —
-the lockdown is specifically on topology-defining resources, not on using the network that
-already exists.
+To keep this page honest about the actual boundary, not just what's denied — these were tested
+and returned `DryRunOperation` (permitted):
+
+- `ec2:RunInstances` — plain instance launch into an existing subnet, including large/GPU
+  instance types (tested with `p4d.24xlarge`) — no instance-type-based SCP restriction found.
+- `ec2:CreateSecurityGroup`
+- `ec2:CreateCustomerGateway`, `ec2:CreateDhcpOptions`, `ec2:CreateFlowLogs`
 
 ### No standing IAM users (`iam:CreateUser`)
 
 | | |
 |---|---|
 | **Denied action** | `iam:CreateUser` |
-| **Policy ID** | `p-cf140vwn` |
+| **Policy ID** | `p-cf140vwn` (same policy as the region lock above — a combined policy with multiple deny statements, not two separate SCPs) |
 | **What it blocks** | Creating any IAM user in this account at all |
 | **Symptom** | `AccessDenied` with the same "explicit deny in a service control policy" marker |
 | **Why** | Matches the SSO model described in [Control Tower](control-tower.md) — all human access is meant to flow through IAM Identity Center roles pushed from the management account, not standing per-account IAM users |
