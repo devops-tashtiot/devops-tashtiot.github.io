@@ -40,13 +40,27 @@ mandatory 7+ day minimum) were deliberately left untested rather than risked.
 | **Symptom** | `AccessDeniedException: You don't have permissions to access this resource` |
 | **Workaround** | None from this account. This is exactly why the restrictions on this page were found by empirically probing individual actions with `--dry-run` rather than reading the policy documents themselves — nobody in a workload account can do the latter. |
 
-### Region lock — almost everything is restricted to `il-central-1`
+### Region lock — restricted to `il-central-1` **and** `us-east-1`, not just one region
+
+**Correction**: an earlier version of this entry said "almost everything is restricted to
+`il-central-1`" — that was incomplete. `us-east-1` is a second fully-allowed region, confirmed by
+re-testing the same read-only calls that were denied in `us-west-2`/`ap-southeast-2`/
+`eu-central-1`/`ap-south-1` — all of them (`ec2:DescribeSubnets`, `rds:DescribeDBInstances`,
+`s3:ListAllMyBuckets`, `lambda:ListFunctions`) succeed with real data when targeted at
+`us-east-1` instead (an actual S3 bucket and an actual `aws-controltower-NotificationForwarder`
+Lambda function both showed up there). This makes sense in hindsight — `us-east-1` is where a lot
+of AWS's own control-plane/global-service machinery runs, including this account's own Control
+Tower automation, so it's a common inclusion in any region-restriction SCP's allowlist. This is
+also, not coincidentally, why `devtools-labs/terraform/modules/backup`'s cross-region DR copy
+target is `us-east-1` and actually works — it's specifically an allowed region, not just one that
+happened to pass an earlier read-only check.
 
 | | |
 |---|---|
 | **Policy ID** | `p-cf140vwn` |
-| **Denied actions** | Confirmed on `ec2:DescribeSubnets`, `rds:DescribeDBInstances`, `lambda:ListFunctions`, `s3:ListAllMyBuckets` — even plain reads — the moment the request targets any region other than `il-central-1` |
-| **Exempted** | IAM (`iam:ListRoles` succeeded regardless of region) — consistent with IAM being a global control-plane service. STS/Organizations are very likely exempted the same way, though not directly tested. |
+| **Allowed regions** | `il-central-1` (this account's home region) and `us-east-1` |
+| **Denied actions** | Confirmed on `ec2:DescribeSubnets`, `rds:DescribeDBInstances`, `lambda:ListFunctions`, `s3:ListAllMyBuckets` — even plain reads — the moment the request targets any region **other than those two** (tested and denied: `us-west-2`, `ap-southeast-2`, `eu-central-1`, `ap-south-1`) |
+| **Exempted (in addition to the two allowed regions)** | IAM (`iam:ListRoles` succeeded regardless of region) — consistent with IAM being a global control-plane service. STS/Organizations are very likely exempted the same way, though not directly tested. |
 | **Symptom** | `UnauthorizedOperation`/`AccessDenied` with "explicit deny in a service control policy," even for read-only calls |
 | **Workaround** | None. Stay in `il-central-1` for anything regional. This is also why this account's [enabled-regions list](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html) being long (18 regions) doesn't mean those regions are actually usable from this workload account — enabled and permitted are different things. |
 
@@ -87,6 +101,7 @@ Gateway to pair it with, which is itself blocked), `ec2:CreateDhcpOptions`, `ec2
 |---|---|
 | `ec2:CreateSubnet` / `ec2:DeleteSubnet` | `p-wptrsvas` |
 | `ec2:CreateRouteTable` | `p-wptrsvas` |
+| `ec2:CreateRoute` (adding a route to an *existing* route table) | `p-wptrsvas` |
 
 Same practical effect as the previous section, one level down, and the same two-way lock: even
 carving up the *existing* VPC further, or adding new routing, is blocked — and so is deleting an
@@ -99,14 +114,16 @@ existing subnet.
 | `ec2:CreateVpcPeeringConnection` | `p-uya91w09` |
 | `ec2:CreateVpcEndpoint` | `p-uya91w09` |
 
-### AMI public sharing is blocked
+### Public sharing of AMIs and snapshots is blocked
 
-| | |
+| Denied action | Policy ID |
 |---|---|
-| **Denied action** | `ec2:ModifyImageAttribute` (adding launch permission for `Group=all`) |
-| **Policy ID** | `p-iwp39iza` |
-| **What it blocks** | Making any AMI in this account publicly shared |
-| **Confirmed still allowed** | Sharing an AMI with a specific other account ID wasn't tested — only the `all` (public) group was |
+| `ec2:ModifyImageAttribute` (adding launch permission for `Group=all`) | `p-iwp39iza` |
+| `ec2:ModifySnapshotAttribute` (adding create-volume permission for `Group=all`) | `p-iwp39iza` |
+
+Same policy blocks both — this is a general "no public AMIs or snapshots" rule, not narrowly
+scoped to one resource type. Sharing with a specific other account ID (rather than the public
+`all` group) wasn't tested for either.
 
 ### Route53 is entirely off-limits — not just hosted-zone creation
 
@@ -136,6 +153,11 @@ and returned `DryRunOperation` (permitted):
 - `ec2:CreateKeyPair`, `ec2:CreateLaunchTemplate`, `ec2:CreateVolume` (unattached EBS),
   `ec2:ModifyInstanceMetadataOptions` (IMDSv2 enforcement) — no restrictions found on any of
   these.
+- `ec2:CreateNetworkAcl`, `ec2:RequestSpotInstances`, `ec2:CreateSnapshot`,
+  `ec2:TerminateInstances`, `ec2:StopInstances` (on an existing instance) — no restrictions found.
+- `ec2:CopySnapshot` with a destination region of `us-east-1` — expected, given `us-east-1` is a
+  fully allowed region (see the region-lock correction above), but confirms cross-region data
+  replication into it specifically works, not just plain resource access.
 
 ### No standing IAM users (`iam:CreateUser`)
 
