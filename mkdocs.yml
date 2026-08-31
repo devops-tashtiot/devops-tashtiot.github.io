@@ -32,3 +32,4 @@ nav:
     - IAM Roles: aws/iam-roles.md
     - Control Tower: aws/control-tower.md
     - SCP Limitations: aws/scp-limitations.md
+    - Governance Anomalies: aws/anomalies.md
