@@ -8,7 +8,7 @@
         {
           "name": "rhdh-templates",
           "url": "https://github.com/devops-tashtiot/rhdh-templates",
-          "icon": "\ud83d\udccb",
+          "icon": "📋",
           "description": "RHDH scaffolder templates for bootstrapping new services via the internal developer portal.",
           "tags": [
             "RHDH",
@@ -20,7 +20,7 @@
         {
           "name": "devops-api",
           "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
-          "icon": "\u26a1",
+          "icon": "⚡",
           "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket.",
           "tags": [
             "Python",
@@ -34,7 +34,7 @@
         {
           "name": "apis-library",
           "url": "https://github.com/Platform-Infra-Org/apis-library",
-          "icon": "\ud83d\udce6",
+          "icon": "📦",
           "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
           "tags": [
             "Python",
@@ -51,13 +51,13 @@
       "name": "AWS",
       "subsections": [
         {
-          "name": "Bootstrap \u2014 run first",
+          "name": "Bootstrap — run first",
           "repos": [
             {
               "name": "aws-terraform-bootstrap",
               "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
-              "icon": "\ud83c\udfd7\ufe0f",
-              "description": "Step 1, once per AWS account: one-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects \u2014 must exist before devtools-labs can apply.",
+              "icon": "🏗️",
+              "description": "Step 1, once per AWS account: one-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects — must exist before devtools-labs can apply.",
               "tags": [
                 "Terraform",
                 "S3",
@@ -68,8 +68,8 @@
             {
               "name": "minikube-ami",
               "url": "https://github.com/devops-tashtiot/minikube-ami",
-              "icon": "\ud83d\udcbf",
-              "description": "Step 2, once per AWS account: Packer template building the golden AMI for the devtools-labs Minikube EC2 instance \u2014 Docker, kubectl, Helm, and Minikube pre-installed. Must exist before devtools-labs's minikube unit can apply.",
+              "icon": "💿",
+              "description": "Step 2, once per AWS account: Packer template building the golden AMI for the devtools-labs Minikube EC2 instance — Docker, kubectl, Helm, and Minikube pre-installed. Must exist before devtools-labs's minikube unit can apply.",
               "tags": [
                 "Packer",
                 "AMI",
@@ -85,7 +85,7 @@
             {
               "name": "aws-xray-db-sync",
               "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
-              "icon": "\ud83d\udd04",
+              "icon": "🔄",
               "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure.",
               "tags": [
                 "AWS Lambda",
@@ -105,8 +105,8 @@
         {
           "name": "devtools-labs",
           "url": "https://devops-tashtiot.github.io/devtools-labs/",
-          "icon": "\ud83e\uddf0",
-          "description": "Step 3: Terraform + Terragrunt that bootstraps Minikube + ArgoCD. From there, ArgoCD's ApplicationSets auto-discover and auto-sync every cluster-infra tool and devtool (ingress, secrets sync, tunnel, Jira, Bitbucket, Confluence, Artifactory, ArgoCD) \u2014 none of it is ever applied by hand.",
+          "icon": "🧰",
+          "description": "Step 3: Terraform + Terragrunt that bootstraps Minikube + ArgoCD. From there, ArgoCD's ApplicationSets auto-discover and auto-sync every cluster-infra tool and devtool (ingress, secrets sync, tunnel, Jira, Bitbucket, Confluence, Artifactory, ArgoCD) — none of it is ever applied by hand.",
           "tags": [
             "Terraform",
             "Terragrunt",
@@ -123,7 +123,7 @@
         {
           "name": "SCP blocks Identity Center directory/user listing",
           "url": "",
-          "icon": "\ud83d\udd10",
+          "icon": "🔐",
           "description": "An SCP pushed down from the Control Tower management account denies identitystore:ListUsers (and sso-directory:ListUsers/SearchUsers) in member accounts, so IAM Identity Center's provisioned users and SCIM sync status with the external identity source can't be inspected via the AWS CLI/API.",
           "tags": [
             "SCP",
@@ -135,14 +135,28 @@
         {
           "name": "Confluence setup wizard breaks if interrupted mid-schema-creation",
           "url": "",
-          "icon": "\u26a0\ufe0f",
-          "description": "If Confluence's pod restarts (RDS nightly stop, EKS node scale-down, etc.) in the narrow window between the setup wizard creating the DB schema and recording that step in confluence.cfg.xml, the on-disk setup-progress marker and the actual DB schema go out of sync. On the next boot Confluence skips re-running schema creation (it thinks that step is already done) but still detects 'existing data' in the target database \u2014 and Confluence's own vendored setup wizard has a broken Velocity template on that confirmation page, rendering literal ${dbConfigInfo...} placeholders instead of real values, which Tomcat then rejects as an invalid request line. Fix: reset both sides together, not just one \u2014 drop and recreate the target database AND delete/rename confluence.cfg.xml so Confluence treats the instance as a genuinely fresh install and redoes schema creation from scratch.",
+          "icon": "⚠️",
+          "description": "If Confluence's pod restarts (RDS nightly stop, EKS node scale-down, etc.) in the narrow window between the setup wizard creating the DB schema and recording that step in confluence.cfg.xml, the on-disk setup-progress marker and the actual DB schema go out of sync. On the next boot Confluence skips re-running schema creation (it thinks that step is already done) but still detects existing data in the target database — and Confluence's own vendored setup wizard has a broken Velocity template on that confirmation page, rendering literal ${dbConfigInfo...} placeholders instead of real values, which Tomcat then rejects as an invalid request line. A pod restart is not the only trigger, though: submitting the wizard's cluster-configuration step also makes Confluence tear down and rebuild its Spring/OSGi context live, in-process, with no restart involved — any request landing in that rebuild window (including the browser's own page load right after the form POST) hits an identical \"Spring Application context has not been set\" error on every Soy-templated page (login, setup wizard), and it self-resolves in 15-90 seconds if left alone. Confirmed present across three Confluence versions (9.3.2, 9.4.1, 10.2.13) — not a version-specific bug, and not fixed by upgrading. Also confirmed the DB-selection wizard page always reports existing tables the moment schema auto-creation has run (which happens on first DB connection, before setup even reaches that page) — seeing that message is expected, not a sign anything broke; choosing to overwrite is safe when there is no real content yet. Fix: reset both sides together, not just one — drop and recreate the target database AND delete/rename confluence.cfg.xml so Confluence treats the instance as a genuinely fresh install and redoes schema creation from scratch.",
           "tags": [
             "Confluence",
             "Atlassian",
             "RDS",
             "EKS",
             "Setup Wizard"
+          ]
+        },
+        {
+          "name": "SCP blocks GuardDuty detector creation",
+          "url": "https://devops-tashtiot.github.io/docs/aws/scp-limitations/",
+          "icon": "🛡️",
+          "description": "An SCP pushed down from the Control Tower management account denies guardduty:CreateDetector in member accounts (policy p-uya91w09, the same one blocking VPC peering/endpoint creation), so this account cannot enable GuardDuty at all, from any role. Confirmed by direct attempt (GuardDuty has no --dry-run support), not a dry-run check. For contrast, Security Hub, AWS Config Rules, and Inspector2 are NOT SCP-restricted — each was enabled and immediately disabled/deleted to confirm, with no lingering resource or cost — so this account's lack of detective tooling is a mix of a deliberate policy block (GuardDuty) and simply nothing having been turned on yet (the others). Workaround: None from this account — GuardDuty would need to be enabled centrally from the management/delegated-admin account.",
+          "tags": [
+            "SCP",
+            "Control Tower",
+            "GuardDuty",
+            "Security Hub",
+            "AWS Config",
+            "Inspector"
           ]
         }
       ]
