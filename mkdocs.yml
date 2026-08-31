@@ -32,5 +32,5 @@ nav:
     - IAM Roles: aws/iam-roles.md
     - Control Tower: aws/control-tower.md
     - SCP Limitations: aws/scp-limitations.md
-  - Platform:
-    - Cloudflare Architecture: platform/cloudflare-architecture.md
+  - Horizon:
+    - Prebuilt Environment: horizon/prebuilt-environment.md
