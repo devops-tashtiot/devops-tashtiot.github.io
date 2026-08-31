@@ -45,39 +45,47 @@ region setting was permanently changed to produce these findings.
 | **Symptom** | `UnauthorizedOperation`/`AccessDenied` with "explicit deny in a service control policy," even for read-only calls |
 | **Workaround** | None. Stay in `il-central-1` for anything regional. This is also why this account's [enabled-regions list](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html) being long (18 regions) doesn't mean those regions are actually usable from this workload account — enabled and permitted are different things. |
 
-### No new internet-facing network egress/ingress points
+### No new internet-facing network egress/ingress points — and no deleting the existing ones either
 
 | Denied action | Policy ID |
 |---|---|
-| `ec2:CreateVpc` | `p-yb5x5s6s` |
-| `ec2:CreateInternetGateway` | `p-yb5x5s6s` |
-| `ec2:CreateNatGateway` | `p-yb5x5s6s` |
+| `ec2:CreateVpc` / `ec2:DeleteVpc` | `p-yb5x5s6s` |
+| `ec2:CreateNatGateway` / `ec2:DeleteNatGateway` | `p-yb5x5s6s` |
 | `ec2:CreateTransitGateway` | `p-yb5x5s6s` |
 | `ec2:CreateVpnGateway` | `p-yb5x5s6s` |
 | `ec2:CreateEgressOnlyInternetGateway` | `p-yb5x5s6s` |
 | `ec2:AllocateAddress` (new Elastic IP) | `p-yb5x5s6s` |
 
 **What this means in practice**: this account can never create a new path in or out of the VPC to
-the public internet, another VPC (via VPN), or acquire a new public IP. Every Terraform module
-here must reuse whatever egress path and IP allocations already exist. This is the actual,
+the public internet, another VPC (via VPN), or acquire a new public IP — and, notably, this cuts
+both ways for VPCs and NAT Gateways specifically: deleting the *existing* one is blocked by the
+same policy as creating a new one, not just a one-way "no more of these" rule. Every Terraform
+module here must reuse whatever egress path and IP allocations already exist. This is the actual,
 verified root cause behind `devtools-labs/terraform/modules/eks`'s design — reusing
 `spokeSubnet1`/`spokeSubnet2`, an existing shared VPC endpoint for `0.0.0.0/0` egress, and (for
 the NAT Gateway dry-run test used to confirm this) an already-allocated Elastic IP rather than a
 fresh one — confirmed here as a hard SCP restriction, not just a cost-driven choice.
 
-**Confirmed still allowed**, for contrast: `ec2:CreateCustomerGateway` (inert without a VPN
-Gateway to pair it with, which is itself blocked), `ec2:CreateDhcpOptions`, and
-`ec2:CreateFlowLogs` (security/observability tooling isn't restricted).
+**Not symmetric across every resource type, though** — `ec2:CreateInternetGateway` is denied, but
+both `ec2:DetachInternetGateway` and `ec2:DeleteInternetGateway` on the *existing* one returned
+`DryRunOperation` (permitted). Don't assume "creation blocked" implies "deletion blocked" for
+every resource type here; each was verified independently.
 
-### No new subnets or route tables
+**Confirmed still allowed**, for contrast: `ec2:CreateCustomerGateway` (inert without a VPN
+Gateway to pair it with, which is itself blocked), `ec2:CreateDhcpOptions`, `ec2:CreateFlowLogs`
+(security/observability tooling isn't restricted), and disabling EBS-default-encryption
+(`ec2:DisableEbsEncryptionByDefault`) — no guardrail against that specific action was found.
+
+### No new subnets or route tables — and no deleting the existing ones either
 
 | Denied action | Policy ID |
 |---|---|
-| `ec2:CreateSubnet` | `p-wptrsvas` |
+| `ec2:CreateSubnet` / `ec2:DeleteSubnet` | `p-wptrsvas` |
 | `ec2:CreateRouteTable` | `p-wptrsvas` |
 
-Same practical effect as the previous section, one level down: even carving up the *existing* VPC
-further, or adding new routing, is blocked — not just adding new top-level network objects.
+Same practical effect as the previous section, one level down, and the same two-way lock: even
+carving up the *existing* VPC further, or adding new routing, is blocked — and so is deleting an
+existing subnet.
 
 ### No new VPC peering or VPC endpoints
 
@@ -86,6 +94,25 @@ further, or adding new routing, is blocked — not just adding new top-level net
 | `ec2:CreateVpcPeeringConnection` | `p-uya91w09` |
 | `ec2:CreateVpcEndpoint` | `p-uya91w09` |
 
+### AMI public sharing is blocked
+
+| | |
+|---|---|
+| **Denied action** | `ec2:ModifyImageAttribute` (adding launch permission for `Group=all`) |
+| **Policy ID** | `p-iwp39iza` |
+| **What it blocks** | Making any AMI in this account publicly shared |
+| **Confirmed still allowed** | Sharing an AMI with a specific other account ID wasn't tested — only the `all` (public) group was |
+
+### Route53 is entirely off-limits — not just hosted-zone creation
+
+| | |
+|---|---|
+| **Policy ID** | `p-77bk5ceo` |
+| **Denied actions** | `route53:CreateHostedZone` (confirmed by direct attempt, not dry-run — Route53 doesn't support `--dry-run`; the explicit deny stopped it before any zone was created), plus even the purely read-only `route53:ListHostedZones` |
+| **What it blocks** | Route53 appears to be blocked wholesale in this account, reads included, not narrowly scoped to zone creation |
+| **Why this matters** | This is why `devtools-labs/terraform/modules/domain-controller` doesn't use a private Route53 hosted zone for a stable LDAP endpoint (tried first, per that module's own comments) — it publishes the domain controller's current private IP to an SSM parameter (`/devops/terraform-created/domain-controller/ldap-connection-url`) instead, refreshed on every apply, since RHBK needs a stable address to read but Route53 was never an option here |
+| **Workaround** | None from this account for DNS. Use SSM (or another mechanism outside Route53) for any "stable name for a thing whose IP can change" need |
+
 ### Confirmed NOT restricted (tested, allowed)
 
 To keep this page honest about the actual boundary, not just what's denied — these were tested
@@ -93,8 +120,14 @@ and returned `DryRunOperation` (permitted):
 
 - `ec2:RunInstances` — plain instance launch into an existing subnet, including large/GPU
   instance types (tested with `p4d.24xlarge`) — no instance-type-based SCP restriction found.
-- `ec2:CreateSecurityGroup`
+- `ec2:CreateSecurityGroup`, and authorizing a wide-open ingress rule
+  (`0.0.0.0/0` on port 22) on an existing security group — no SCP guardrail against permissive
+  security group rules was found (a Config rule may still flag this detectively, but nothing
+  preventively blocks it at the SCP layer).
 - `ec2:CreateCustomerGateway`, `ec2:CreateDhcpOptions`, `ec2:CreateFlowLogs`
+- `ec2:DisableEbsEncryptionByDefault`
+- `ec2:DetachInternetGateway`, `ec2:DeleteInternetGateway` (on the existing IGW) — see the
+  asymmetry noted above.
 
 ### No standing IAM users (`iam:CreateUser`)
 
