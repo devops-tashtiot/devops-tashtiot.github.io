@@ -1,0 +1,1463 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://devops-tashtiot.github.io/docs/aws/scp-limitations/">
+      
+      
+        <link rel="prev" href="../control-tower/">
+      
+      
+        <link rel="next" href="../anomalies/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>SCP Limitations - devops-tashtiot</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#scp-limitations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="devops-tashtiot" class="md-header__button md-logo" aria-label="devops-tashtiot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            devops-tashtiot
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SCP Limitations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="devops-tashtiot" class="md-nav__button md-logo" aria-label="devops-tashtiot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    devops-tashtiot
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vpc-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VPC Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windows-server-rdp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Server RDP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../irsa-pod-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IRSA Pod Identity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../iam-roles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IAM Roles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control-tower/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Tower
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCP Limitations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCP Limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#known-restrictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Restrictions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Known Restrictions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#identity-center-directoryuser-listing-identitystorelistusers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identity Center directory/user listing (identitystore:ListUsers)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organizations-policy-visibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organizations policy visibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region-lock-restricted-to-il-central-1-and-us-east-1-not-just-one-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Region lock — restricted to il-central-1 and us-east-1, not just one region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-new-internet-facing-network-egressingress-points-and-no-deleting-the-existing-ones-either" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No new internet-facing network egress/ingress points — and no deleting the existing ones either
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-new-subnets-or-route-tables-and-no-deleting-the-existing-ones-either" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No new subnets or route tables — and no deleting the existing ones either
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-new-vpc-peering-or-vpc-endpoints-and-no-deleting-the-existing-endpoint-either" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No new VPC peering or VPC endpoints — and no deleting the existing endpoint either
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guardduty-is-blocked-at-the-scp-layer-not-just-unconfigured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GuardDuty is blocked at the SCP layer — not just unconfigured
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-sharing-of-amis-and-snapshots-is-blocked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public sharing of AMIs and snapshots is blocked
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route53-is-entirely-off-limits-not-just-hosted-zone-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route53 is entirely off-limits — not just hosted-zone creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-not-restricted-tested-allowed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confirmed NOT restricted (tested, allowed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-standing-iam-users-iamcreateuser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No standing IAM users (iam:CreateUser)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iam-privilege-escalation-is-not-blocked-by-an-scp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IAM privilege escalation is NOT blocked by an SCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#governance-model-observations-read-only-no-mutation-attempted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governance model observations (read-only, no mutation attempted)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anomalies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance Anomalies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#known-restrictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Restrictions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Known Restrictions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#identity-center-directoryuser-listing-identitystorelistusers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identity Center directory/user listing (identitystore:ListUsers)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organizations-policy-visibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organizations policy visibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region-lock-restricted-to-il-central-1-and-us-east-1-not-just-one-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Region lock — restricted to il-central-1 and us-east-1, not just one region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-new-internet-facing-network-egressingress-points-and-no-deleting-the-existing-ones-either" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No new internet-facing network egress/ingress points — and no deleting the existing ones either
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-new-subnets-or-route-tables-and-no-deleting-the-existing-ones-either" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No new subnets or route tables — and no deleting the existing ones either
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-new-vpc-peering-or-vpc-endpoints-and-no-deleting-the-existing-endpoint-either" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No new VPC peering or VPC endpoints — and no deleting the existing endpoint either
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guardduty-is-blocked-at-the-scp-layer-not-just-unconfigured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GuardDuty is blocked at the SCP layer — not just unconfigured
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-sharing-of-amis-and-snapshots-is-blocked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public sharing of AMIs and snapshots is blocked
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route53-is-entirely-off-limits-not-just-hosted-zone-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route53 is entirely off-limits — not just hosted-zone creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-not-restricted-tested-allowed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confirmed NOT restricted (tested, allowed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-standing-iam-users-iamcreateuser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No standing IAM users (iam:CreateUser)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iam-privilege-escalation-is-not-blocked-by-an-scp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IAM privilege escalation is NOT blocked by an SCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#governance-model-observations-read-only-no-mutation-attempted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governance model observations (read-only, no mutation attempted)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="scp-limitations">SCP Limitations</h1>
+<p>A running reference of Service Control Policy (SCP) restrictions discovered while working in
+this account, so nobody re-attempts the same blocked approach without checking here first. SCPs
+in this Control Tower-managed Landing Zone are pushed down from the management account — see
+<a href="../control-tower/">Control Tower</a> for how that governance model works. Member-account roles
+(including full workload admins) cannot view or override an SCP; it just silently denies the
+underlying API call, regardless of the caller's own IAM permissions.</p>
+<p>Everything below the Identity Center entry was confirmed by direct probing of this account:
+<code>ec2:*</code> calls with the <code>--dry-run</code> flag (which evaluates permissions/SCPs without ever executing
+the action) wherever available; for non-dry-run-capable calls, relying on the fact that an
+explicit deny stops the call before anything is created or read; and for the one test needing a
+real resource (IAM role/policy attachment), creating a throwaway resource and deleting it
+immediately after confirming the result. No resource was left behind, and no region setting was
+permanently changed, to produce these findings. Riskier categories with no safe test method
+(load-balancer creation with real cost, CloudTrail/Config/GuardDuty disable actions where a false
+"allowed" would be a real security regression, KMS key creation where pending-deletion has a
+mandatory 7+ day minimum) were deliberately left untested rather than risked.</p>
+<hr />
+<h2 id="known-restrictions">Known Restrictions</h2>
+<h3 id="identity-center-directoryuser-listing-identitystorelistusers">Identity Center directory/user listing (<code>identitystore:ListUsers</code>)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Denied actions</strong></td>
+<td><code>identitystore:ListUsers</code>, <code>sso-directory:ListUsers</code>, <code>sso-directory:SearchUsers</code></td>
+</tr>
+<tr>
+<td><strong>What it blocks</strong></td>
+<td>Inspecting IAM Identity Center's provisioned users, or checking Identity Center's sync status with its external identity source (directory/SCIM), from a workload-account role</td>
+</tr>
+<tr>
+<td><strong>Symptom</strong></td>
+<td><code>AccessDenied</code> — the error message includes "explicit deny in a service control policy," distinguishing it from a plain IAM permission gap</td>
+</tr>
+<tr>
+<td><strong>Workaround</strong></td>
+<td>None via CLI/API. Check in the Identity Center console instead (<strong>Settings → Identity source → Provisioning</strong>), which runs in the management-account context, not this workload account</td>
+</tr>
+</tbody>
+</table>
+<h3 id="organizations-policy-visibility">Organizations policy visibility</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Denied actions</strong></td>
+<td><code>organizations:DescribeOrganization</code>, <code>organizations:ListPoliciesForTarget</code></td>
+</tr>
+<tr>
+<td><strong>What it blocks</strong></td>
+<td>Reading the account's own SCPs directly — you can't list which policies are attached or fetch their JSON from inside the workload account</td>
+</tr>
+<tr>
+<td><strong>Symptom</strong></td>
+<td><code>AccessDeniedException: You don't have permissions to access this resource</code></td>
+</tr>
+<tr>
+<td><strong>Workaround</strong></td>
+<td>None from this account. This is exactly why the restrictions on this page were found by empirically probing individual actions with <code>--dry-run</code> rather than reading the policy documents themselves — nobody in a workload account can do the latter.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="region-lock-restricted-to-il-central-1-and-us-east-1-not-just-one-region">Region lock — restricted to <code>il-central-1</code> <strong>and</strong> <code>us-east-1</code>, not just one region</h3>
+<p><strong>Correction</strong>: an earlier version of this entry said "almost everything is restricted to
+<code>il-central-1</code>" — that was incomplete. <code>us-east-1</code> is a second fully-allowed region, confirmed by
+re-testing the same read-only calls that were denied in <code>us-west-2</code>/<code>ap-southeast-2</code>/
+<code>eu-central-1</code>/<code>ap-south-1</code> — all of them (<code>ec2:DescribeSubnets</code>, <code>rds:DescribeDBInstances</code>,
+<code>s3:ListAllMyBuckets</code>, <code>lambda:ListFunctions</code>) succeed with real data when targeted at
+<code>us-east-1</code> instead (an actual S3 bucket and an actual <code>aws-controltower-NotificationForwarder</code>
+Lambda function both showed up there). This makes sense in hindsight — <code>us-east-1</code> is where a lot
+of AWS's own control-plane/global-service machinery runs, including this account's own Control
+Tower automation, so it's a common inclusion in any region-restriction SCP's allowlist. This is
+also, not coincidentally, why <code>devtools-labs/terraform/modules/backup</code>'s cross-region DR copy
+target is <code>us-east-1</code> and actually works — it's specifically an allowed region, not just one that
+happened to pass an earlier read-only check.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Policy ID</strong></td>
+<td><code>p-cf140vwn</code></td>
+</tr>
+<tr>
+<td><strong>Allowed regions</strong></td>
+<td><code>il-central-1</code> (this account's home region) and <code>us-east-1</code></td>
+</tr>
+<tr>
+<td><strong>Denied actions</strong></td>
+<td>Confirmed on <code>ec2:DescribeSubnets</code>, <code>rds:DescribeDBInstances</code>, <code>lambda:ListFunctions</code>, <code>s3:ListAllMyBuckets</code> — even plain reads — the moment the request targets any region <strong>other than those two</strong> (tested and denied: <code>us-west-2</code>, <code>ap-southeast-2</code>, <code>eu-central-1</code>, <code>ap-south-1</code>, <code>eu-west-1</code>, <code>ap-northeast-1</code>, <code>ca-central-1</code> — seven regions checked, all denied, confirming the allowlist is exactly <code>{il-central-1, us-east-1}</code> and not a longer list)</td>
+</tr>
+<tr>
+<td><strong>Exempted (in addition to the two allowed regions)</strong></td>
+<td>IAM (<code>iam:ListRoles</code> succeeded regardless of region) — consistent with IAM being a global control-plane service. STS/Organizations are very likely exempted the same way, though not directly tested.</td>
+</tr>
+<tr>
+<td><strong>Symptom</strong></td>
+<td><code>UnauthorizedOperation</code>/<code>AccessDenied</code> with "explicit deny in a service control policy," even for read-only calls</td>
+</tr>
+<tr>
+<td><strong>Workaround</strong></td>
+<td>None. Stay in <code>il-central-1</code> for anything regional. This is also why this account's <a href="https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html">enabled-regions list</a> being long (18 regions) doesn't mean those regions are actually usable from this workload account — enabled and permitted are different things.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="no-new-internet-facing-network-egressingress-points-and-no-deleting-the-existing-ones-either">No new internet-facing network egress/ingress points — and no deleting the existing ones either</h3>
+<table>
+<thead>
+<tr>
+<th>Denied action</th>
+<th>Policy ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ec2:CreateVpc</code> / <code>ec2:DeleteVpc</code></td>
+<td><code>p-yb5x5s6s</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateNatGateway</code> / <code>ec2:DeleteNatGateway</code></td>
+<td><code>p-yb5x5s6s</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateTransitGateway</code></td>
+<td><code>p-yb5x5s6s</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateVpnGateway</code></td>
+<td><code>p-yb5x5s6s</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateEgressOnlyInternetGateway</code></td>
+<td><code>p-yb5x5s6s</code></td>
+</tr>
+<tr>
+<td><code>ec2:AllocateAddress</code> (new Elastic IP)</td>
+<td><code>p-yb5x5s6s</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What this means in practice</strong>: this account can never create a new path in or out of the VPC to
+the public internet, another VPC (via VPN), or acquire a new public IP — and, notably, this cuts
+both ways for VPCs and NAT Gateways specifically: deleting the <em>existing</em> one is blocked by the
+same policy as creating a new one, not just a one-way "no more of these" rule. Every Terraform
+module here must reuse whatever egress path and IP allocations already exist. This is the actual,
+verified root cause behind <code>devtools-labs/terraform/modules/eks</code>'s design — reusing
+<code>spokeSubnet1</code>/<code>spokeSubnet2</code>, an existing shared VPC endpoint for <code>0.0.0.0/0</code> egress, and (for
+the NAT Gateway dry-run test used to confirm this) an already-allocated Elastic IP rather than a
+fresh one — confirmed here as a hard SCP restriction, not just a cost-driven choice.</p>
+<p><strong>Not symmetric across every resource type, though</strong> — <code>ec2:CreateInternetGateway</code> is denied, but
+both <code>ec2:DetachInternetGateway</code> and <code>ec2:DeleteInternetGateway</code> on the <em>existing</em> one returned
+<code>DryRunOperation</code> (permitted). Don't assume "creation blocked" implies "deletion blocked" for
+every resource type here; each was verified independently.</p>
+<p><strong>Confirmed still allowed</strong>, for contrast: <code>ec2:CreateCustomerGateway</code> (inert without a VPN
+Gateway to pair it with, which is itself blocked), <code>ec2:CreateDhcpOptions</code>, <code>ec2:CreateFlowLogs</code>
+(security/observability tooling isn't restricted), and disabling EBS-default-encryption
+(<code>ec2:DisableEbsEncryptionByDefault</code>) — no guardrail against that specific action was found.</p>
+<h3 id="no-new-subnets-or-route-tables-and-no-deleting-the-existing-ones-either">No new subnets or route tables — and no deleting the existing ones either</h3>
+<table>
+<thead>
+<tr>
+<th>Denied action</th>
+<th>Policy ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ec2:CreateSubnet</code> / <code>ec2:DeleteSubnet</code></td>
+<td><code>p-wptrsvas</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateRouteTable</code></td>
+<td><code>p-wptrsvas</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateRoute</code> (adding a route to an <em>existing</em> route table)</td>
+<td><code>p-wptrsvas</code></td>
+</tr>
+<tr>
+<td><code>apigateway:POST</code> on <code>/restapis</code> (creating a REST API)</td>
+<td><code>p-wptrsvas</code></td>
+</tr>
+</tbody>
+</table>
+<p>That last one is a genuine surprise — this same policy also blocks creating an API Gateway REST
+API, not just EC2 networking primitives. Whatever this policy's actual scope is, it isn't limited
+to "VPC-adjacent" resources the way its other members suggested. Confirmed it's not REST-API-
+specific either: <code>apigatewayv2:CreateApi</code> (HTTP/WebSocket APIs) is denied by the same
+<code>p-wptrsvas</code> — the block covers API Gateway as a whole. AppSync (GraphQL APIs) is a separate
+service and is <strong>not</strong> covered by this or any other policy — tested by creating and immediately
+deleting one.</p>
+<p><strong>A related but distinct case — Global Accelerator</strong>: <code>globalaccelerator:CreateAccelerator</code> is
+also denied, but by <code>p-cf140vwn</code> (the region-lock policy), not this one. Global Accelerator's API
+only exists in the <code>us-west-2</code> endpoint regardless of where you'd actually want the accelerator —
+and <code>us-west-2</code> isn't in this account's two allowed regions (<code>il-central-1</code>, <code>us-east-1</code>), so this
+is very likely collateral from the region lock rather than a deliberate "no Global Accelerator"
+rule.</p>
+<p>Same practical effect as the previous section, one level down, and the same two-way lock: even
+carving up the <em>existing</em> VPC further, or adding new routing, is blocked — and so is deleting an
+existing subnet.</p>
+<h3 id="no-new-vpc-peering-or-vpc-endpoints-and-no-deleting-the-existing-endpoint-either">No new VPC peering or VPC endpoints — and no deleting the existing endpoint either</h3>
+<table>
+<thead>
+<tr>
+<th>Denied action</th>
+<th>Policy ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ec2:CreateVpcPeeringConnection</code></td>
+<td><code>p-uya91w09</code></td>
+</tr>
+<tr>
+<td><code>ec2:CreateVpcEndpoint</code> / <code>ec2:DeleteVpcEndpoints</code></td>
+<td><code>p-uya91w09</code></td>
+</tr>
+</tbody>
+</table>
+<p>The existing shared VPC endpoint this whole platform's egress depends on can't be deleted either
+— same two-way lock pattern as the VPC/subnet/NAT Gateway restrictions above.</p>
+<h3 id="guardduty-is-blocked-at-the-scp-layer-not-just-unconfigured">GuardDuty is blocked at the SCP layer — not just unconfigured</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Denied action</strong></td>
+<td><code>guardduty:CreateDetector</code></td>
+</tr>
+<tr>
+<td><strong>Policy ID</strong></td>
+<td><code>p-uya91w09</code> — the same policy that blocks VPC peering and VPC endpoint creation above; a combined policy with multiple deny statements, not a GuardDuty-specific one</td>
+</tr>
+<tr>
+<td><strong>Symptom</strong></td>
+<td><code>AccessDeniedException</code> with "explicit deny in a service control policy," on a direct <code>--enable</code> attempt (GuardDuty's API has no <code>--dry-run</code> support, so this was a real call — it failed before any detector was created, confirmed via <code>guardduty:ListDetectors</code> returning empty immediately after)</td>
+</tr>
+<tr>
+<td><strong>Why this matters</strong></td>
+<td>Answers a question <a href="../anomalies/">Governance Anomalies</a> left open: zero GuardDuty detectors exist in this account, and this confirms that's a deliberate SCP block, not an oversight or a service nobody got around to enabling</td>
+</tr>
+<tr>
+<td><strong>Workaround</strong></td>
+<td>None from this account. GuardDuty would have to be enabled centrally (management/delegated-admin account), if the org wants it at all</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Contrast — Security Hub, Config Rules, and Inspector2 are NOT blocked</strong>, tested in the same
+session: <code>securityhub:EnableSecurityHub</code>, <code>configservice:PutConfigRule</code>, and <code>inspector2:Enable</code>
+all succeeded for real (each was immediately disabled/deleted afterward — no lingering resource
+or cost). So the "no detective controls" gap on
+<a href="../anomalies/">Governance Anomalies</a> is a mix of both causes depending on the service: GuardDuty
+specifically is walled off by policy, while Security Hub/Config Rules/Inspector2 are simply
+available and unused.</p>
+<h3 id="public-sharing-of-amis-and-snapshots-is-blocked">Public sharing of AMIs and snapshots is blocked</h3>
+<table>
+<thead>
+<tr>
+<th>Denied action</th>
+<th>Policy ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ec2:ModifyImageAttribute</code> (adding launch permission for <code>Group=all</code>)</td>
+<td><code>p-iwp39iza</code></td>
+</tr>
+<tr>
+<td><code>ec2:ModifySnapshotAttribute</code> (adding create-volume permission for <code>Group=all</code>)</td>
+<td><code>p-iwp39iza</code></td>
+</tr>
+</tbody>
+</table>
+<p>Same policy blocks both — this is a general "no public AMIs or snapshots" rule, not narrowly
+scoped to one resource type. Sharing with a specific other account ID (rather than the public
+<code>all</code> group) wasn't tested for either.</p>
+<h3 id="route53-is-entirely-off-limits-not-just-hosted-zone-creation">Route53 is entirely off-limits — not just hosted-zone creation</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Policy ID</strong></td>
+<td><code>p-77bk5ceo</code></td>
+</tr>
+<tr>
+<td><strong>Denied actions</strong></td>
+<td><code>route53:CreateHostedZone</code> (confirmed by direct attempt, not dry-run — Route53 doesn't support <code>--dry-run</code>; the explicit deny stopped it before any zone was created), the purely read-only <code>route53:ListHostedZones</code>, and the same read-only denial extends to the <strong>separate</strong> <code>route53resolver:*</code> and <code>route53domains:*</code> API namespaces (<code>ListResolverEndpoints</code>, <code>ListDomains</code>) — all three fall under this one policy</td>
+</tr>
+<tr>
+<td><strong>What it blocks</strong></td>
+<td>Every Route53-family service is blocked wholesale in this account — core DNS, Resolver, and domain registration alike — not narrowly scoped to hosted-zone creation</td>
+</tr>
+<tr>
+<td><strong>Why this matters</strong></td>
+<td>This is why <code>devtools-labs/terraform/modules/domain-controller</code> doesn't use a private Route53 hosted zone for a stable LDAP endpoint (tried first, per that module's own comments) — it publishes the domain controller's current private IP to an SSM parameter (<code>/devops/terraform-created/domain-controller/ldap-connection-url</code>) instead, refreshed on every apply, since RHBK needs a stable address to read but Route53 was never an option here</td>
+</tr>
+<tr>
+<td><strong>Workaround</strong></td>
+<td>None from this account for DNS. Use SSM (or another mechanism outside Route53) for any "stable name for a thing whose IP can change" need</td>
+</tr>
+</tbody>
+</table>
+<h3 id="confirmed-not-restricted-tested-allowed">Confirmed NOT restricted (tested, allowed)</h3>
+<p>To keep this page honest about the actual boundary, not just what's denied — these were tested
+and returned <code>DryRunOperation</code> (permitted):</p>
+<ul>
+<li><code>ec2:RunInstances</code> — plain instance launch into an existing subnet, including large/GPU
+  instance types (tested with <code>p4d.24xlarge</code>) — no instance-type-based SCP restriction found.</li>
+<li><code>ec2:CreateSecurityGroup</code>, and authorizing a wide-open ingress rule
+  (<code>0.0.0.0/0</code> on port 22) on an existing security group — no SCP guardrail against permissive
+  security group rules was found (a Config rule may still flag this detectively, but nothing
+  preventively blocks it at the SCP layer).</li>
+<li><code>ec2:CreateCustomerGateway</code>, <code>ec2:CreateDhcpOptions</code>, <code>ec2:CreateFlowLogs</code></li>
+<li><code>ec2:DisableEbsEncryptionByDefault</code></li>
+<li><code>ec2:DetachInternetGateway</code>, <code>ec2:DeleteInternetGateway</code> (on the existing IGW) — see the
+  asymmetry noted above.</li>
+<li><code>ec2:CreateKeyPair</code>, <code>ec2:CreateLaunchTemplate</code>, <code>ec2:CreateVolume</code> (unattached EBS),
+  <code>ec2:ModifyInstanceMetadataOptions</code> (IMDSv2 enforcement) — no restrictions found on any of
+  these.</li>
+<li><code>ec2:CreateNetworkAcl</code>, <code>ec2:RequestSpotInstances</code>, <code>ec2:CreateSnapshot</code>,
+  <code>ec2:TerminateInstances</code>, <code>ec2:StopInstances</code> (on an existing instance) — no restrictions found.</li>
+<li><code>ec2:CopySnapshot</code> with a destination region of <code>us-east-1</code> — expected, given <code>us-east-1</code> is a
+  fully allowed region (see the region-lock correction above), but confirms cross-region data
+  replication into it specifically works, not just plain resource access.</li>
+<li><code>ec2:ReleaseAddress</code> (releasing an <em>existing</em> Elastic IP) — asymmetric with
+  <code>ec2:AllocateAddress</code> (a new one) being denied: this account can free up EIP usage but can't
+  acquire more.</li>
+<li><code>ssm:PutParameter</code> with <code>--tier Advanced</code> (the paid tier) — no cost-control guardrail found;
+  tested by creating and immediately deleting one, no charge incurred.</li>
+<li><code>sns:CreateTopic</code>, <code>sqs:CreateQueue</code>, <code>cloudwatch:PutMetricAlarm</code>,
+  <code>secretsmanager:CreateSecret</code> — none of these non-EC2 services (which don't support
+  <code>--dry-run</code>) are SCP-restricted either; each was created for real and deleted immediately after
+  (Secrets Manager via <code>--force-delete-without-recovery</code>, bypassing its normal 7-30 day recovery
+  window, so nothing lingered).</li>
+<li><code>ce:GetCostAndUsage</code> (Cost Explorer, read-only) — not restricted.</li>
+<li><code>dynamodb:CreateTable</code>, <code>wafv2:CreateWebACL</code>, <code>appsync:CreateGraphqlApi</code> — all created for
+  real and deleted immediately after; not restricted.</li>
+<li><code>rds:CreateDBSnapshot</code> — a real manual snapshot of the live <code>devtools-rds</code> instance, created
+  and deleted immediately after (redundant with the existing AWS Backup daily plan); not
+  restricted.</li>
+<li><code>bedrock:ListFoundationModels</code>, <code>bedrock:GetModelInvocationLoggingConfiguration</code> (both
+  read-only) — not restricted. Consistent with this account's existing
+  <code>lz-integration-bedrock-cloudwatch-*</code> roles, which imply Bedrock is already in active use here.</li>
+<li><code>securityhub:EnableSecurityHub</code>, <code>configservice:PutConfigRule</code>, <code>inspector2:Enable</code> — none of
+  these detective-control services are SCP-restricted (contrast with GuardDuty above, which is);
+  each was enabled/created for real and disabled/deleted immediately after, no lingering resource
+  or cost.</li>
+</ul>
+<h3 id="no-standing-iam-users-iamcreateuser">No standing IAM users (<code>iam:CreateUser</code>)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Denied action</strong></td>
+<td><code>iam:CreateUser</code></td>
+</tr>
+<tr>
+<td><strong>Policy ID</strong></td>
+<td><code>p-cf140vwn</code> (same policy as the region lock above — a combined policy with multiple deny statements, not two separate SCPs)</td>
+</tr>
+<tr>
+<td><strong>What it blocks</strong></td>
+<td>Creating any IAM user in this account at all</td>
+</tr>
+<tr>
+<td><strong>Symptom</strong></td>
+<td><code>AccessDenied</code> with the same "explicit deny in a service control policy" marker</td>
+</tr>
+<tr>
+<td><strong>Why</strong></td>
+<td>Matches the SSO model described in <a href="../control-tower/">Control Tower</a> — all human access is meant to flow through IAM Identity Center roles pushed from the management account, not standing per-account IAM users</td>
+</tr>
+<tr>
+<td><strong>Workaround</strong></td>
+<td>None — this is enforced by design. Use an Identity Center permission set instead.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="iam-privilege-escalation-is-not-blocked-by-an-scp">IAM privilege escalation is NOT blocked by an SCP</h3>
+<p>Tested by creating a throwaway IAM role and attaching <code>AdministratorAccess</code> to it directly
+(<code>iam:CreateRole</code>, <code>iam:AttachRolePolicy</code>) — both succeeded, confirmed attached, then cleaned up
+immediately (<code>iam:DetachRolePolicy</code>, <code>iam:DeleteRole</code>). No SCP prevents a role created in this
+account from being granted full admin permissions. This is a real, meaningful gap compared to the
+"no standing IAM users" restriction above — the identity-creation door is closed, but nothing at
+the SCP layer stops privilege escalation on identities (roles) this account is otherwise allowed
+to create. Whatever prevents this in practice is a matter of IAM permission scoping/process
+discipline, not an SCP guardrail.</p>
+<h3 id="governance-model-observations-read-only-no-mutation-attempted">Governance model observations (read-only, no mutation attempted)</h3>
+<p>A few things about how this account's guardrails actually work, discovered by direct read-only
+checks rather than testing an action:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS Config recorder</td>
+<td><strong>Active and recording</strong> — <code>aws-controltower-BaselineConfigRecorder</code>, last successful run today</td>
+</tr>
+<tr>
+<td>AWS Config Rules attached to this account</td>
+<td><strong>Zero</strong> (<code>describe-config-rules</code> returns an empty list) — the recorder captures resource history, but no local rule evaluation runs in this account; if Config-based guardrails exist for this org, they're evaluated centrally from the management/audit account, not visible here</td>
+</tr>
+<tr>
+<td>GuardDuty detectors in this account</td>
+<td><strong>Zero</strong> (<code>list-detectors</code> returns an empty list) — no GuardDuty detector exists in this account context</td>
+</tr>
+<tr>
+<td>CloudFormation StackSets</td>
+<td><strong>None visible</strong> — <code>list-stack-sets</code> returns empty, and a known Control Tower guardrail StackSet name (<code>AWSControlTowerBP-BASELINE-CONFIG</code>) returns <code>StackSetNotFoundException</code> from this account. Guardrail deployment machinery isn't visible from a member account, consistent with SCPs also being unreadable directly (see above)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway</strong>: this account's actual preventive controls are entirely the SCPs on this page —
+there's no locally-visible Config Rule or GuardDuty layer backing them up. Detective/compliance
+monitoring for this account, if any, happens centrally and isn't observable from here.</p>
+<hr />
+<h2 id="related-topics">Related Topics</h2>
+<ul>
+<li><a href="../control-tower/">Control Tower</a> — how SCPs fit into the broader multi-account governance model</li>
+<li><a href="../iam-roles/">IAM Roles</a> — the roles these restrictions apply to</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

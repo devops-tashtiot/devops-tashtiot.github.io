@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VPC Architecture — devops-tashtiot</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f6f8fa;
+      color: #24292f;
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #57606a;
+      text-decoration: none;
+      margin-bottom: 40px;
+    }
+    .back:hover { color: #0969da; }
+
+    header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    header h1 { font-size: 2rem; color: #24292f; letter-spacing: -0.5px; }
+    header p { margin-top: 8px; color: #57606a; font-size: 1rem; }
+
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #57606a;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #d0d7de;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      padding: 24px;
+    }
+
+    .flow {
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      padding: 28px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.85rem;
+      line-height: 2;
+      color: #24292f;
+    }
+
+    .flow .step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .flow .arrow {
+      color: #8c959f;
+      padding-left: 16px;
+    }
+    .flow .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .badge-spoke    { background: #ddf4ff; border: 1px solid #54aeff; color: #0969da; }
+    .badge-hub      { background: #fff8c5; border: 1px solid #d4a72c; color: #7d4e00; }
+    .badge-nat      { background: #dafbe1; border: 1px solid #4ac26b; color: #1a7f37; }
+    .badge-internet { background: #eaeef2; border: 1px solid #d0d7de; color: #57606a; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      font-weight: 600;
+      color: #24292f;
+      font-size: 0.8rem;
+    }
+    td {
+      padding: 10px 14px;
+      border: 1px solid #d0d7de;
+      color: #24292f;
+      vertical-align: top;
+    }
+    tr:hover td { background: #f6f8fa; }
+
+    .pill {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #eaeef2;
+      border: 1px solid #d0d7de;
+      color: #57606a;
+      margin: 2px 2px 0 0;
+    }
+
+    .principle {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .principle-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .principle-title { font-weight: 600; font-size: 0.9rem; color: #24292f; margin-bottom: 4px; }
+    .principle-desc  { font-size: 0.85rem; color: #57606a; line-height: 1.55; }
+
+    .principles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .principles-grid { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 64px;
+      color: #8c959f;
+      font-size: 0.8rem;
+    }
+    footer a { color: #8c959f; text-decoration: none; }
+    footer a:hover { color: #0969da; }
+  </style>
+</head>
+<body>
+
+<div style="max-width:860px;margin:0 auto">
+  <a class="back" href="/">← devops-tashtiot</a>
+</div>
+
+<header>
+  <h1>🌐 VPC Architecture</h1>
+  <p>Hub-and-Spoke network design with distributed egress and centralized inspection</p>
+</header>
+
+<div class="content">
+
+  <!-- Overview -->
+  <div>
+    <div class="section-label">Overview</div>
+    <div class="card">
+      <p style="font-size:0.9rem;line-height:1.7;color:#24292f">
+        Each workload account runs a <strong>spoke VPC</strong> in <code>il-central-1</code> (Israel).
+        All outbound internet traffic is inspected by a <strong>centralized Network Firewall</strong>
+        that lives in a shared hub account — without any Transit Gateway.
+        After inspection, traffic exits through the spoke's own NAT Gateway and Internet Gateway.
+        This is the <strong>distributed egress</strong> model: shared inspection, local exit.
+      </p>
+    </div>
+  </div>
+
+  <!-- Traffic Flow -->
+  <div>
+    <div class="section-label">Traffic Flow — Egress</div>
+    <div class="flow">
+      <div class="step">
+        <span>Your app</span>
+        <span class="badge badge-spoke">Spoke subnet — workloads</span>
+      </div>
+      <div class="arrow">↓ &nbsp;0.0.0.0/0 → firewall VPC endpoint</div>
+      <div class="step">
+        <span>Hub firewall</span>
+        <span class="badge badge-hub">Hub account — centralized Network Firewall</span>
+      </div>
+      <div class="arrow">↓ &nbsp;approved — traffic returns to firewall subnet</div>
+      <div class="step">
+        <span>NAT Gateway</span>
+        <span class="badge badge-nat">NAT subnet — per-AZ egress</span>
+      </div>
+      <div class="arrow">↓ &nbsp;0.0.0.0/0 → Internet Gateway</div>
+      <div class="step">
+        <span>Internet</span>
+        <span class="badge badge-internet">Public — traffic leaves your account</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subnets -->
+  <div>
+    <div class="section-label">Subnet Layout</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Subnet type</th>
+            <th>CIDR</th>
+            <th>AZs</th>
+            <th>Purpose</th>
+            <th>Deploy workloads here?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Spoke</strong></td>
+            <td><code>/24</code> — 251 IPs</td>
+            <td>1a, 1b</td>
+            <td>All application resources — EC2, Lambda, RDS, ECS</td>
+            <td>✅ Yes</td>
+          </tr>
+          <tr>
+            <td><strong>Firewall</strong></td>
+            <td><code>/27</code> — 26 IPs</td>
+            <td>1a, 1b</td>
+            <td>VPC endpoints connecting to the hub's Network Firewall</td>
+            <td>❌ No</td>
+          </tr>
+          <tr>
+            <td><strong>NAT</strong></td>
+            <td><code>/27</code> — 26 IPs</td>
+            <td>1a, 1b</td>
+            <td>NAT Gateways — the actual door to the internet after inspection</td>
+            <td>❌ No</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Who owns what -->
+  <div>
+    <div class="section-label">Who Owns What</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Lives in</th>
+            <th>Shared across accounts?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Network Firewall (inspection rules)</td>
+            <td>Hub account</td>
+            <td>✅ Yes — all spoke VPCs share it</td>
+          </tr>
+          <tr>
+            <td>Firewall VPC endpoints</td>
+            <td>Spoke account (firewall subnets)</td>
+            <td>❌ No — one per spoke VPC</td>
+          </tr>
+          <tr>
+            <td>NAT Gateway</td>
+            <td>Spoke account (NAT subnets)</td>
+            <td>❌ No — one per AZ per spoke</td>
+          </tr>
+          <tr>
+            <td>Internet Gateway</td>
+            <td>Spoke account</td>
+            <td>❌ No — one per spoke VPC</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Design Principles -->
+  <div>
+    <div class="section-label">Design Principles</div>
+    <div class="card">
+      <div class="principles-grid">
+        <div class="principle">
+          <span class="principle-icon">🔍</span>
+          <div>
+            <div class="principle-title">Centralized inspection</div>
+            <div class="principle-desc">All egress traffic passes through a single shared firewall. Security rules are managed once, enforced everywhere.</div>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="principle-icon">🚪</span>
+          <div>
+            <div class="principle-title">Distributed egress</div>
+            <div class="principle-desc">Each spoke has its own NAT GW and IGW. No Transit Gateway needed — internet exit is local, only inspection is central.</div>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="principle-icon">⚡</span>
+          <div>
+            <div class="principle-title">High availability</div>
+            <div class="principle-desc">Every subnet type is deployed in two AZs. Each AZ has its own firewall endpoint, NAT Gateway, and spoke subnet.</div>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="principle-icon">🔒</span>
+          <div>
+            <div class="principle-title">No direct internet access</div>
+            <div class="principle-desc">No resource has a public IP. All subnets are isolated — nothing reaches the internet without passing the firewall first.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer style="margin-top:64px">
+  <a href="/">← devops-tashtiot</a>
+</footer>
+
+</body>
+</html>
