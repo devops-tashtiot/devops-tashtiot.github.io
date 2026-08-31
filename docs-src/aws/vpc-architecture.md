@@ -14,14 +14,11 @@ traffic is forced through an inspection pipeline before it can leave or enter.
 The pipeline has three layers, all within your VPC, but with inspection happening
 cross-account in a shared hub:
 
-```
-[ Your workload ]
-      ↓
-[ Hub firewall ]   ← lives in a shared security account, not yours
-      ↓
-[ NAT Gateway ]    ← lives in your account
-      ↓
-[ Internet ]
+```mermaid
+flowchart LR
+    W["Your workload"] --> HF["Hub firewall<br/>(shared security account)"]
+    HF --> NAT["NAT Gateway<br/>(your account)"]
+    NAT --> I["Internet"]
 ```
 
 ---
@@ -267,35 +264,29 @@ per resource type with the minimum required ports.
 
 ## Full Egress + Ingress Flow
 
-```
-EGRESS (outbound)
-─────────────────────────────────────────────────────────
-Workload  (spoke subnet — 10.3.65.0/24 or 10.3.66.0/24)
-  ↓  route: 0.0.0.0/0 → vpce-063335608106cb20a
-GWLB endpoint  (firewallSubnet — 10.3.64.0/27 or 10.3.64.32/27)
-  ↓  forwarded cross-account
-RootHub-inspection-firewall  (hub account)
-  ↓  approved — packet returned to firewall subnet
-GWLB endpoint  (firewall subnet)
-  ↓  route: 0.0.0.0/0 → nat-0fc371e4278247404
-NAT Gateway  (natSubnet — 10.3.67.0/27 or 10.3.67.32/27)
-             swaps private IP → Elastic IP
-  ↓  route: 0.0.0.0/0 → igw-0d54a13bd04e6242e
-Internet Gateway → Internet
+```mermaid
+sequenceDiagram
+    participant W as Workload<br/>(spoke subnet)
+    participant GW as GWLB endpoint<br/>(firewall subnet)
+    participant FW as RootHub-inspection-firewall<br/>(hub account)
+    participant NAT as NAT Gateway<br/>(nat subnet)
+    participant IGW as Internet Gateway
+    participant NET as Internet
 
+    Note over W,NET: EGRESS (outbound)
+    W->>GW: route 0.0.0.0/0 → GWLB endpoint
+    GW->>FW: forwarded cross-account
+    FW-->>GW: approved, packet returned
+    GW->>NAT: route 0.0.0.0/0 → NAT Gateway
+    NAT->>IGW: swap private IP → Elastic IP
+    IGW->>NET: route 0.0.0.0/0 → Internet Gateway
 
-INGRESS (inbound reply)
-─────────────────────────────────────────────────────────
-Internet → Internet Gateway
-  ↓  IGW route table: 10.3.65.0/24 → vpce-065568da4cfe1d602
-                      10.3.66.0/24 → vpce-063335608106cb20a
-GWLB endpoint  (firewall subnet)
-  ↓  forwarded cross-account
-RootHub-inspection-firewall  (hub account)
-  ↓  approved — packet returned
-GWLB endpoint  (firewall subnet)
-  ↓  delivered to destination
-Workload  (spoke subnet)
+    Note over W,NET: INGRESS (inbound reply)
+    NET->>IGW: reply arrives
+    IGW->>GW: IGW route table → GWLB endpoint (per spoke subnet)
+    GW->>FW: forwarded cross-account
+    FW-->>GW: approved, packet returned
+    GW->>W: delivered to destination
 ```
 
 Both directions pass through the hub firewall — no packet bypasses inspection.
@@ -308,13 +299,15 @@ The GWLB endpoint is the most unusual component in this VPC — it looks like a 
 
 ### The two players
 
-```
-Your account (spoke)               Hub account (security team)
-────────────────────               ───────────────────────────
-GWLB Endpoint                      Gateway Load Balancer (GWLB)
-vpce-063335608106cb20a   ←──────→  + Firewall appliances (EC2s running inspection software)
-  IP: 10.3.64.42
-  Subnet: firewallSubnet2
+```mermaid
+flowchart LR
+    subgraph YA["Your account (spoke)"]
+        EP["GWLB Endpoint<br/>vpce-063335608106cb20a<br/>IP: 10.3.64.42<br/>Subnet: firewallSubnet2"]
+    end
+    subgraph HA["Hub account (security team)"]
+        GWLB["Gateway Load Balancer (GWLB)<br/>+ Firewall appliances<br/>(EC2s running inspection software)"]
+    end
+    EP <--> GWLB
 ```
 
 Your account owns the **endpoint** — just a network interface sitting in `firewallSubnet2`. The hub security account owns the actual **load balancer and firewall VMs** that do the inspection. You cannot see or modify the firewall rules from your account.

@@ -66,11 +66,18 @@ The AWS SDK (baked into your application, e.g. the ALB Ingress Controller) is pr
 3. Receives back short-lived credentials (Access Key + Secret + Session Token, valid ~15 min–1 hr).
 4. Uses those credentials for all subsequent AWS API calls.
 
-```
-Pod → STS: "Here is my JWT, I want to assume arn:aws:iam::...:role/AWSLoadBalancerControllerRole"
-STS → OIDC endpoint: "Is this signature valid?"
-OIDC endpoint → STS: "Yes, verified."
-STS → Pod: "Here are your temporary credentials."
+```mermaid
+sequenceDiagram
+    participant K8s as Kubernetes API Server
+    participant Pod as Pod<br/>(projected token volume)
+    participant STS as AWS STS
+    participant OIDC as EKS OIDC endpoint
+
+    K8s->>Pod: inject signed JWT into<br/>/var/run/secrets/eks.amazonaws.com/serviceaccount/token
+    Pod->>STS: AssumeRoleWithWebIdentity(JWT, role ARN)
+    STS->>OIDC: is this signature valid?
+    OIDC-->>STS: yes, verified (public key match)
+    STS-->>Pod: temporary credentials<br/>(~15 min – 1 hr)
 ```
 
 The SDK handles token refresh automatically when credentials near expiry.

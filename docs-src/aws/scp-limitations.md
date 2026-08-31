@@ -133,6 +133,24 @@ existing subnet.
 The existing shared VPC endpoint this whole platform's egress depends on can't be deleted either
 — same two-way lock pattern as the VPC/subnet/NAT Gateway restrictions above.
 
+### GuardDuty is blocked at the SCP layer — not just unconfigured
+
+| | |
+|---|---|
+| **Denied action** | `guardduty:CreateDetector` |
+| **Policy ID** | `p-uya91w09` — the same policy that blocks VPC peering and VPC endpoint creation above; a combined policy with multiple deny statements, not a GuardDuty-specific one |
+| **Symptom** | `AccessDeniedException` with "explicit deny in a service control policy," on a direct `--enable` attempt (GuardDuty's API has no `--dry-run` support, so this was a real call — it failed before any detector was created, confirmed via `guardduty:ListDetectors` returning empty immediately after) |
+| **Why this matters** | Answers a question [Governance Anomalies](anomalies.md) left open: zero GuardDuty detectors exist in this account, and this confirms that's a deliberate SCP block, not an oversight or a service nobody got around to enabling |
+| **Workaround** | None from this account. GuardDuty would have to be enabled centrally (management/delegated-admin account), if the org wants it at all |
+
+**Contrast — Security Hub, Config Rules, and Inspector2 are NOT blocked**, tested in the same
+session: `securityhub:EnableSecurityHub`, `configservice:PutConfigRule`, and `inspector2:Enable`
+all succeeded for real (each was immediately disabled/deleted afterward — no lingering resource
+or cost). So the "no detective controls" gap on
+[Governance Anomalies](anomalies.md) is a mix of both causes depending on the service: GuardDuty
+specifically is walled off by policy, while Security Hub/Config Rules/Inspector2 are simply
+available and unused.
+
 ### Public sharing of AMIs and snapshots is blocked
 
 | Denied action | Policy ID |
@@ -196,6 +214,10 @@ and returned `DryRunOperation` (permitted):
 - `bedrock:ListFoundationModels`, `bedrock:GetModelInvocationLoggingConfiguration` (both
   read-only) — not restricted. Consistent with this account's existing
   `lz-integration-bedrock-cloudwatch-*` roles, which imply Bedrock is already in active use here.
+- `securityhub:EnableSecurityHub`, `configservice:PutConfigRule`, `inspector2:Enable` — none of
+  these detective-control services are SCP-restricted (contrast with GuardDuty above, which is);
+  each was enabled/created for real and disabled/deleted immediately after, no lingering resource
+  or cost.
 
 ### No standing IAM users (`iam:CreateUser`)
 

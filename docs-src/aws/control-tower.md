@@ -14,25 +14,25 @@ Control Tower solves this by making the **management account the single source o
 
 ## Architecture
 
-```
-Management Account (Control Tower home)
-│
-│  Deploys via CloudFormation StackSets
-├─────────────────────────────────────────────┐
-│                                             │
-▼                                             ▼
-Log Archive Account             Audit Account
-(centralized CloudTrail         (security read-only
- + Config logs)                  access to all accounts)
-│
-│  Governs all member accounts via SCPs + StackSets
-▼
-Member Accounts (e.g. this workload account)
-├── AWSControlTowerExecution          ← management account assumes this
-├── aws-controltower-AdministratorExecutionRole
-├── aws-controltower-ConfigRecorderRole
-├── aws-controltower-ForwardSnsNotificationRole
-└── aws-controltower-ReadOnlyExecutionRole
+```mermaid
+flowchart TB
+    MGMT["Management Account<br/>(Control Tower home)"]
+    LOG["Log Archive Account<br/>centralized CloudTrail + Config logs"]
+    AUDIT["Audit Account<br/>security read-only access to all accounts"]
+    MEM["Member Accounts<br/>(e.g. this workload account)"]
+
+    MGMT -->|CloudFormation StackSets| LOG
+    MGMT -->|CloudFormation StackSets| AUDIT
+    MGMT -->|SCPs + StackSets| MEM
+
+    subgraph MEM_ROLES["Roles deployed into each member account"]
+        R1["AWSControlTowerExecution<br/>(management account assumes this)"]
+        R2["aws-controltower-AdministratorExecutionRole"]
+        R3["aws-controltower-ConfigRecorderRole"]
+        R4["aws-controltower-ForwardSnsNotificationRole"]
+        R5["aws-controltower-ReadOnlyExecutionRole"]
+    end
+    MEM --- MEM_ROLES
 ```
 
 ---

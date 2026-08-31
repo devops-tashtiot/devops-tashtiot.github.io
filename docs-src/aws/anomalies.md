@@ -50,11 +50,22 @@ Three separate checks, all read-only, all confirmed:
 - **No CloudFormation StackSets** are visible from this account, including a known Control Tower
   guardrail StackSet name that returned `StackSetNotFoundException`.
 
+**Update — the GuardDuty gap specifically is a deliberate SCP block, not an oversight**: a direct
+`guardduty:CreateDetector` attempt returns an explicit SCP deny (policy `p-uya91w09` — see
+[SCP Limitations](scp-limitations.md)), so this account is structurally unable to enable GuardDuty
+itself regardless of intent. The Config Rules gap is different in kind, though: `configservice:
+PutConfigRule` is **not** SCP-restricted (tested directly, succeeded, cleaned up immediately) —
+zero Config Rules exist here simply because nobody has added any, not because the account is
+blocked from doing so. Security Hub and Inspector2 were tested the same way and are also
+unrestricted. So this account's detective-control gap is two different problems wearing one
+symptom: GuardDuty is walled off centrally, while Config Rules/Security Hub/Inspector2 are open
+doors nobody has walked through yet.
+
 **Why this is notable**: the SCPs on [SCP Limitations](scp-limitations.md) are this account's
 *entire* verified preventive layer — there's no local compliance-monitoring layer to catch a
 misconfiguration that falls outside what an SCP happens to cover (like the IGW deletion gap
 above). If detective monitoring exists for this org, it isn't visible or running from this
-account.
+account — and for GuardDuty specifically, it structurally can't be, from here.
 
 ## An idle NAT Gateway has been running unused for at least 7 days, and this account can't delete it
 
