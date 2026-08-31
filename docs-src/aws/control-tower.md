@@ -90,11 +90,12 @@ All human access roles (`AWSReservedSSO_*`) are defined centrally in IAM Identit
 
 ### Granting access day-to-day
 
-Day-to-day permission changes don't go through the Identity Center console/management-account
-path above — that's for structural changes to the SSO setup itself. To get a colleague access
-to something, they sign in to the AWS access portal ("myapps") and the request is handled by an
-admin account: admin-level SSO permission sets are held by each team/stack's lead, who grants
-permissions to their own team's members from there.
+!!! note "Day-to-day access requests don't go through Identity Center"
+    Day-to-day permission changes don't go through the Identity Center console/management-account
+    path above — that's for structural changes to the SSO setup itself. To get a colleague access
+    to something, they sign in to the AWS access portal ("myapps") and the request is handled by
+    an admin account: admin-level SSO permission sets are held by each team/stack's lead, who
+    grants permissions to their own team's members from there.
 
 ---
 
