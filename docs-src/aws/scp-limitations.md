@@ -190,6 +190,12 @@ and returned `DryRunOperation` (permitted):
 - `ce:GetCostAndUsage` (Cost Explorer, read-only) — not restricted.
 - `dynamodb:CreateTable`, `wafv2:CreateWebACL`, `appsync:CreateGraphqlApi` — all created for
   real and deleted immediately after; not restricted.
+- `rds:CreateDBSnapshot` — a real manual snapshot of the live `devtools-rds` instance, created
+  and deleted immediately after (redundant with the existing AWS Backup daily plan); not
+  restricted.
+- `bedrock:ListFoundationModels`, `bedrock:GetModelInvocationLoggingConfiguration` (both
+  read-only) — not restricted. Consistent with this account's existing
+  `lz-integration-bedrock-cloudwatch-*` roles, which imply Bedrock is already in active use here.
 
 ### No standing IAM users (`iam:CreateUser`)
 
