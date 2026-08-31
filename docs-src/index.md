@@ -12,9 +12,3 @@ Infrastructure, automation, and platform tooling documentation.
 | [IAM Roles](aws/iam-roles.md) | All IAM roles in the workload account grouped by purpose: SSO, Control Tower, EKS, automation, and service-linked roles |
 | [Control Tower](aws/control-tower.md) | How AWS Control Tower governs multi-account environments via SCPs, StackSets, and IAM role deployment |
 | [SCP Limitations](aws/scp-limitations.md) | Every Service Control Policy restriction discovered while working in this account, with symptoms and workarounds |
-
-## Horizon
-
-| Page | Description |
-|---|---|
-| [Prebuilt Environment](horizon/prebuilt-environment.md) | What the Horizon Landing Zone provisions in this account before any devops-tashtiot work — the fixed VPC, governance model, and a dormant pre-existing OpenShift cluster |
