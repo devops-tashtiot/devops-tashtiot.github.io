@@ -11,9 +11,10 @@ Infrastructure, automation, and platform tooling documentation.
 | [IRSA: Pod Identity Token Lifecycle](aws/irsa-pod-identity.md) | How EKS Pods automatically receive AWS credentials via JWT injection and STS — Zero-Code Identity pattern |
 | [IAM Roles](aws/iam-roles.md) | All IAM roles in the workload account grouped by purpose: SSO, Control Tower, EKS, automation, and service-linked roles |
 | [Control Tower](aws/control-tower.md) | How AWS Control Tower governs multi-account environments via SCPs, StackSets, and IAM role deployment |
+| [SCP Limitations](aws/scp-limitations.md) | Every Service Control Policy restriction discovered while working in this account, with symptoms and workarounds |
 
-## Horizon
+## Platform
 
 | Page | Description |
 |---|---|
-| [Prebuilt Environment](horizon/prebuilt-environment.md) | What the Horizon Landing Zone provisions in this account before any devops-tashtiot work — the fixed VPC, governance model, and a dormant pre-existing OpenShift cluster |
+| [Cloudflare Architecture](platform/cloudflare-architecture.md) | How Cloudflare Access/Tunnel routes browser traffic vs. how CoreDNS routes in-cluster callers to the same EKS/RDS/EFS-backed devtools |
