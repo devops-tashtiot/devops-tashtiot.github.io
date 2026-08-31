@@ -102,6 +102,11 @@ Gateway to pair it with, which is itself blocked), `ec2:CreateDhcpOptions`, `ec2
 | `ec2:CreateSubnet` / `ec2:DeleteSubnet` | `p-wptrsvas` |
 | `ec2:CreateRouteTable` | `p-wptrsvas` |
 | `ec2:CreateRoute` (adding a route to an *existing* route table) | `p-wptrsvas` |
+| `apigateway:POST` on `/restapis` (creating a REST API) | `p-wptrsvas` |
+
+That last one is a genuine surprise — this same policy also blocks creating an API Gateway REST
+API, not just EC2 networking primitives. Whatever this policy's actual scope is, it isn't limited
+to "VPC-adjacent" resources the way its other members suggested.
 
 Same practical effect as the previous section, one level down, and the same two-way lock: even
 carving up the *existing* VPC further, or adding new routing, is blocked — and so is deleting an
@@ -133,8 +138,8 @@ scoped to one resource type. Sharing with a specific other account ID (rather th
 | | |
 |---|---|
 | **Policy ID** | `p-77bk5ceo` |
-| **Denied actions** | `route53:CreateHostedZone` (confirmed by direct attempt, not dry-run — Route53 doesn't support `--dry-run`; the explicit deny stopped it before any zone was created), plus even the purely read-only `route53:ListHostedZones` |
-| **What it blocks** | Route53 appears to be blocked wholesale in this account, reads included, not narrowly scoped to zone creation |
+| **Denied actions** | `route53:CreateHostedZone` (confirmed by direct attempt, not dry-run — Route53 doesn't support `--dry-run`; the explicit deny stopped it before any zone was created), the purely read-only `route53:ListHostedZones`, and the same read-only denial extends to the **separate** `route53resolver:*` and `route53domains:*` API namespaces (`ListResolverEndpoints`, `ListDomains`) — all three fall under this one policy |
+| **What it blocks** | Every Route53-family service is blocked wholesale in this account — core DNS, Resolver, and domain registration alike — not narrowly scoped to hosted-zone creation |
 | **Why this matters** | This is why `devtools-labs/terraform/modules/domain-controller` doesn't use a private Route53 hosted zone for a stable LDAP endpoint (tried first, per that module's own comments) — it publishes the domain controller's current private IP to an SSM parameter (`/devops/terraform-created/domain-controller/ldap-connection-url`) instead, refreshed on every apply, since RHBK needs a stable address to read but Route53 was never an option here |
 | **Workaround** | None from this account for DNS. Use SSM (or another mechanism outside Route53) for any "stable name for a thing whose IP can change" need |
 
@@ -172,6 +177,8 @@ and returned `DryRunOperation` (permitted):
   (Secrets Manager via `--force-delete-without-recovery`, bypassing its normal 7-30 day recovery
   window, so nothing lingered).
 - `ce:GetCostAndUsage` (Cost Explorer, read-only) — not restricted.
+- `dynamodb:CreateTable`, `wafv2:CreateWebACL` — both created for real and deleted
+  immediately after; not restricted.
 
 ### No standing IAM users (`iam:CreateUser`)
 
