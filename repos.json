@@ -4,6 +4,10 @@
   "sections": [
     {
       "name": "Devtools IaC + GitOps",
+      "description": [
+        "Stand up a complete AWS environment — EKS, RDS, a Windows AD domain controller, DNS/CDN, backups, and every devtool on top — with effectively one click.",
+        "Everything here is provisioned and kept in sync purely through IaC (Terraform/Terragrunt) and GitOps (ArgoCD auto-syncing from Git) — nothing is ever applied by hand."
+      ],
       "repos": [
         {
           "name": "Documentation",
@@ -94,6 +98,10 @@
     },
     {
       "name": "Platform",
+      "description": [
+        "Wrapper APIs that sit in front of all our tools — Bitbucket, Jira, Confluence, SonarQube, Artifactory, ArgoCD — so they're provisioned and managed through one consistent interface instead of each tool's own console.",
+        "In the operational environment, those APIs are called through approval-request templates built on Backstage, rather than being hit directly."
+      ],
       "repos": [
         {
           "name": "devops-api",
@@ -129,6 +137,10 @@
     },
     {
       "name": "CI/CD",
+      "description": [
+        "Custom semantic-versioning and CHANGELOG automation for every Docker image our CI/CD pipelines build, driven by conventional commits rather than manual tagging.",
+        "Also customizes third-party images by baking in the internal CA, so outside images can be pulled and run inside the org's network over TLS."
+      ],
       "repos": [
         {
           "name": "a-woodpecker-plugins",
@@ -170,6 +182,9 @@
     },
     {
       "name": "SaaS",
+      "description": [
+        "Packages the org's own tooling (ArgoCD, Woodpecker) as a service other teams can onboard onto, instead of each team standing up and maintaining their own instance."
+      ],
       "repos": [
         {
           "name": "argocd",
@@ -199,6 +214,9 @@
     },
     {
       "name": "Automation",
+      "description": [
+        "Small automations that exist purely to make day-to-day operational life simpler — syncing data and alerting on the repetitive chores nobody wants to do by hand."
+      ],
       "repos": [
         {
           "name": "aws-xray-db-sync",
