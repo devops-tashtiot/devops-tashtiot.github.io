@@ -5,8 +5,8 @@
     {
       "name": "Devtools IaC + GitOps",
       "description": [
-        "As a devops team managing many internal tools, we built this to accelerate development with a self-hosted AWS environment — fully customizable and modeled after our real internal setup, not a stripped-down sandbox.",
-        "The foundation is identity and data: a Windows AD domain controller paired with RHBK (Keycloak) for OIDC, and a shared Postgres database on RDS — the same primitives every devtool on top depends on.",
+        "As a devops team managing many internal tools, we built this to accelerate development with a self-hosted AWS environment — fully customizable and modeled after our real internal setup, not a stripped-down sandbox. Our org actually runs on an on-prem network with its own Windows AD domain controller, so this environment reproduces that same identity setup in AWS rather than inventing a cloud-only one.",
+        "The foundation is identity and data: a Windows AD domain controller (mirroring the on-prem one) paired with RHBK (Keycloak) for OIDC, and a shared Postgres database on RDS — the same primitives every devtool on top depends on.",
         "The devtools themselves (Jira, Bitbucket, Confluence, Artifactory, ArgoCD, Xray) are layered on top of that foundation, standing up a complete environment with effectively one click.",
         "Foundation and devtools alike are provisioned and kept in sync purely through IaC (Terraform/Terragrunt) and GitOps (ArgoCD auto-syncing from Git) — nothing is ever applied by hand.",
         "Every tool is reachable under the *.devopstashtiot.page domain suffix, fronted by Cloudflare and locked down with Cloudflare Access so only org member emails can get in."
