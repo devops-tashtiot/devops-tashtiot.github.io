@@ -199,7 +199,7 @@
       ]
     },
     {
-      "name": "Lessons Learned",
+      "name": "AWS Env Limits & Permissions",
       "repos": [
         {
           "name": "SCP blocks GuardDuty detector creation",
