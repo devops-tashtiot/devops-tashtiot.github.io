@@ -236,7 +236,7 @@
       ]
     },
     {
-      "name": "AWS Env Limits & Permissions",
+      "name": "AWS Environment & Governance",
       "repos": [
         {
           "name": "AWS Environment Docs",
