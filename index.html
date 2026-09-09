@@ -262,29 +262,6 @@
       line-height: 1.55;
     }
 
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .tag {
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: #eaeef2;
-      border: 1px solid #d0d7de;
-      color: #57606a;
-    }
-
-    .tag.tag-wip {
-      background: #fff8c5;
-      border-color: #d4a72c;
-      color: #9a6700;
-      font-weight: 600;
-    }
-
     footer {
       text-align: center;
       margin-top: 64px;
@@ -326,12 +303,8 @@
   }
 
   function buildCard(repo) {
-    const tagList = repo.tags || [];
-    const tags = tagList
-      .map(t => `<span class="tag${t === 'In Progress' ? ' tag-wip' : ''}">${t}</span>`)
-      .join('');
     const ownerRepo = ownerRepoOf(repo);
-    const isWip = tagList.includes('In Progress');
+    const isWip = !!repo.inProgress;
     const issuesLink = ownerRepo ? `
         <a class="card-issues" data-repo="${ownerRepo}" href="https://github.com/${ownerRepo}/issues" target="_blank" rel="noopener">
           <span class="issues-text">Issues…</span>
@@ -344,7 +317,6 @@
             <span class="card-name">${repo.name}</span>
           </div>
           <p class="card-desc">${repo.description}</p>
-          <div class="card-tags">${tags}</div>
         </a>${issuesLink}
       </div>`;
   }
