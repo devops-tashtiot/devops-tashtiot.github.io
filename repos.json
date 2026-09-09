@@ -219,17 +219,17 @@
       "name": "AWS Env Limits & Permissions",
       "repos": [
         {
-          "name": "SCP blocks GuardDuty detector creation",
+          "name": "AWS Environment Docs",
           "url": "https://devops-tashtiot.github.io/docs/",
           "icon": "🛡️",
-          "description": "An SCP pushed down from the Control Tower management account denies guardduty:CreateDetector in member accounts (policy p-uya91w09, the same one blocking VPC peering/endpoint creation), so this account cannot enable GuardDuty at all, from any role. Confirmed by direct attempt (GuardDuty has no --dry-run support), not a dry-run check. For contrast, Security Hub, AWS Config Rules, and Inspector2 are NOT SCP-restricted — each was enabled and immediately disabled/deleted to confirm, with no lingering resource or cost — so this account's lack of detective tooling is a mix of a deliberate policy block (GuardDuty) and simply nothing having been turned on yet (the others). Workaround: None from this account — GuardDuty would need to be enabled centrally from the management/delegated-admin account.",
+          "description": "Documents this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block (e.g. GuardDuty/VPC peering denied by policy p-uya91w09), IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Published on this same site (devops-tashtiot.github.io), which doubles as the GitHub Pages landing page guiding another devops team through every repo in this organization.",
           "tags": [
             "SCP",
             "Control Tower",
+            "IAM",
+            "VPC",
             "GuardDuty",
-            "Security Hub",
-            "AWS Config",
-            "Inspector"
+            "Governance"
           ]
         }
       ]
