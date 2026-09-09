@@ -1,0 +1,62 @@
+{
+  "Platform-Infra-Org/apis-library": {
+    "issues": 1,
+    "wip": false
+  },
+  "devops-tashtiot/a-woodpecker-plugins": {
+    "issues": 0,
+    "wip": true
+  },
+  "devops-tashtiot/argocd": {
+    "issues": 1,
+    "wip": true
+  },
+  "devops-tashtiot/aws-terraform-bootstrap": {
+    "issues": 0,
+    "wip": false
+  },
+  "devops-tashtiot/aws-xray-db-sync": {
+    "issues": 0,
+    "wip": false
+  },
+  "devops-tashtiot/clusters-definition": {
+    "issues": 0,
+    "wip": false
+  },
+  "devops-tashtiot/clusters-provision": {
+    "issues": 1,
+    "wip": false
+  },
+  "devops-tashtiot/devops-api": {
+    "issues": 5,
+    "wip": false
+  },
+  "devops-tashtiot/devops-tashtiot.github.io": {
+    "issues": 0,
+    "wip": false
+  },
+  "devops-tashtiot/devtools-definition": {
+    "issues": 0,
+    "wip": false
+  },
+  "devops-tashtiot/devtools-labs": {
+    "issues": 4,
+    "wip": false
+  },
+  "devops-tashtiot/devtools-provision": {
+    "issues": 1,
+    "wip": false
+  },
+  "devops-tashtiot/inbound-images": {
+    "issues": 0,
+    "wip": true
+  },
+  "devops-tashtiot/outbound-images-with-ca": {
+    "issues": 0,
+    "wip": true
+  },
+  "devops-tashtiot/woodpecker": {
+    "issues": 1,
+    "wip": true
+  }
+}

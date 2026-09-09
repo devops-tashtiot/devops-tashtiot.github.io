@@ -320,55 +320,34 @@
       </div>`;
   }
 
-  // Card color (green/yellow) comes from the repo's real GitHub topics
-  // (the "in-progress" topic), not from anything hand-maintained in repos.json.
+  // Card color (green/yellow) comes from each repo's real GitHub topics
+  // ("in-progress"), and the issues pill from its real open-issue count --
+  // both precomputed at deploy time into status.json by
+  // scripts/generate_status.py (run with the workflow's authenticated
+  // token, 5000 req/hour) so visitors' browsers never call the GitHub API
+  // directly and never hit its 60 req/hour unauthenticated, per-IP limit.
   function loadRepoStatus() {
-    const CACHE_TTL = 15 * 60 * 1000;
-    const repos = new Set();
-    document.querySelectorAll('.card[data-repo]').forEach(el => {
-      const r = el.getAttribute('data-repo');
-      if (r) repos.add(r);
-    });
-
-    repos.forEach(ownerRepo => {
-      const apply = (openIssues, wip) => {
-        const clean = openIssues === 0;
-        document.querySelectorAll(`.card[data-repo="${ownerRepo}"]`).forEach(card => {
+    fetch('status.json')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(status => {
+        document.querySelectorAll('.card[data-repo]').forEach(card => {
+          const ownerRepo = card.getAttribute('data-repo');
+          const entry = ownerRepo && status[ownerRepo];
+          if (!entry) return;
+          const clean = entry.issues === 0;
           card.classList.remove('status-wip', 'status-stable');
-          card.classList.add(wip ? 'status-wip' : 'status-stable');
+          card.classList.add(entry.wip ? 'status-wip' : 'status-stable');
+          document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"]`).forEach(link => {
+            link.classList.add(clean ? 'is-clean' : 'has-issues');
+            link.querySelector('.issues-text').textContent =
+              clean ? 'No open issues' : `${entry.issues} open issue${entry.issues === 1 ? '' : 's'}`;
+          });
         });
-        document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"]`).forEach(link => {
-          link.classList.add(clean ? 'is-clean' : 'has-issues');
-          link.querySelector('.issues-text').textContent =
-            clean ? 'No open issues' : `${openIssues} open issue${openIssues === 1 ? '' : 's'}`;
-        });
-      };
-
-      let cached = null;
-      try {
-        cached = JSON.parse(localStorage.getItem(`ghrepo:${ownerRepo}`) || 'null');
-      } catch (e) {}
-
-      if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
-        apply(cached.count, cached.wip);
-        return;
-      }
-
-      fetch(`https://api.github.com/repos/${ownerRepo}`)
-        .then(r => r.ok ? r.json() : Promise.reject(r.status))
-        .then(data => {
-          const count = data.open_issues_count || 0;
-          const wip = Array.isArray(data.topics) && data.topics.includes('in-progress');
-          try {
-            localStorage.setItem(`ghrepo:${ownerRepo}`, JSON.stringify({ count, wip, ts: Date.now() }));
-          } catch (e) {}
-          apply(count, wip);
-        })
-        .catch(() => {
-          document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"] .issues-text`)
-            .forEach(t => t.textContent = 'Issues');
-        });
-    });
+      })
+      .catch(() => {
+        // status.json missing/unreachable -- cards stay uncolored, issues
+        // pills stay labeled "Issues..." rather than showing wrong data.
+      });
   }
 
   function buildGrid(repos) {
