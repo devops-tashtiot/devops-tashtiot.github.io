@@ -3,133 +3,20 @@
   "tagline": "Infrastructure, automation, and platform tooling",
   "sections": [
     {
-      "name": "Platform",
+      "name": "Devtools IaC + GitOps",
       "repos": [
         {
-          "name": "rhdh-templates",
-          "url": "https://github.com/devops-tashtiot/rhdh-templates",
-          "icon": "📋",
-          "description": "RHDH scaffolder templates for bootstrapping new services via the internal developer portal.",
-          "tags": [
-            "RHDH",
-            "Backstage",
-            "Scaffolding",
-            "IDP"
-          ]
-        },
-        {
-          "name": "devops-api",
-          "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
-          "icon": "⚡",
-          "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket. Bitbucket is the source of truth; this GitHub copy is a read-only mirror kept in sync by a Woodpecker pipeline on every Bitbucket push.",
-          "tags": [
-            "Python",
-            "FastAPI",
-            "AWX",
-            "ArgoCD",
-            "Vault",
-            "Bitbucket"
-          ]
-        },
-        {
-          "name": "apis-library",
-          "url": "https://github.com/Platform-Infra-Org/apis-library",
-          "icon": "📦",
-          "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
-          "tags": [
-            "Python",
-            "FastAPI",
-            "Library",
-            "AWX",
-            "ArgoCD",
-            "Vault"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "AWS",
-      "subsections": [
-        {
-          "name": "Bootstrap — run first",
-          "repos": [
-            {
-              "name": "aws-terraform-bootstrap",
-              "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
-              "icon": "🏗️",
-              "description": "Step 1, once per AWS account: one-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects — must exist before devtools-labs can apply.",
-              "tags": [
-                "Terraform",
-                "S3",
-                "Remote State",
-                "Bootstrap"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "Automation",
-          "repos": [
-            {
-              "name": "aws-xray-db-sync",
-              "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
-              "icon": "🔄",
-              "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure.",
-              "tags": [
-                "AWS Lambda",
-                "EventBridge",
-                "S3",
-                "Terraform",
-                "Terragrunt"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "CI/CD & Images",
-      "repos": [
-        {
-          "name": "a-woodpecker-plugins",
-          "url": "https://github.com/devops-tashtiot/a-woodpecker-plugins",
-          "icon": "🚀",
-          "description": "MasterVersions — a stateless release orchestrator (`release.py`) that automates semantic versioning and changelog generation for polyrepo, monorepo, and nested-monorepo layouts, driven entirely by the PR body. Read-only mirror; source of truth is Bitbucket.",
-          "tags": [
-            "Woodpecker",
-            "Release Automation",
-            "Semver",
-            "Python"
-          ]
-        },
-        {
-          "name": "inbound-images",
-          "url": "https://github.com/devops-tashtiot/inbound-images",
+          "name": "aws-terraform-bootstrap",
+          "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
           "icon": "🏗️",
-          "description": "The org's own base images and Woodpecker plugins — real content, versioned independently per component (VERSION.txt) using the same commit-message grammar as a-woodpecker-plugins.",
+          "description": "Step 1, once per AWS account: one-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects — must exist before devtools-labs can apply.",
           "tags": [
-            "Docker",
-            "Woodpecker",
-            "Base Images"
+            "Terraform",
+            "S3",
+            "Remote State",
+            "Bootstrap"
           ]
         },
-        {
-          "name": "outbound-images-with-ca",
-          "url": "https://github.com/devops-tashtiot/outbound-images-with-ca",
-          "icon": "🔒",
-          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach *.devopstashtiot.page over TLS. Everything shares one version, bumped only when the CA rotates.",
-          "tags": [
-            "Docker",
-            "TLS",
-            "Internal CA",
-            "Hardening"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Devtools Env",
-      "repos": [
         {
           "name": "devtools-labs",
           "url": "https://devops-tashtiot.github.io/devtools-labs/",
@@ -189,6 +76,124 @@
             "Helm",
             "ArgoCD ApplicationSet",
             "Values"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Platform",
+      "repos": [
+        {
+          "name": "devops-api",
+          "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
+          "icon": "⚡",
+          "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket. Bitbucket is the source of truth; this GitHub copy is a read-only mirror kept in sync by a Woodpecker pipeline on every Bitbucket push.",
+          "tags": [
+            "Python",
+            "FastAPI",
+            "AWX",
+            "ArgoCD",
+            "Vault",
+            "Bitbucket"
+          ]
+        },
+        {
+          "name": "apis-library",
+          "url": "https://github.com/Platform-Infra-Org/apis-library",
+          "icon": "📦",
+          "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory.",
+          "tags": [
+            "Python",
+            "FastAPI",
+            "Library",
+            "AWX",
+            "ArgoCD",
+            "Vault"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CI/CD",
+      "repos": [
+        {
+          "name": "a-woodpecker-plugins",
+          "url": "https://github.com/devops-tashtiot/a-woodpecker-plugins",
+          "icon": "🚀",
+          "description": "MasterVersions — a stateless release orchestrator (`release.py`) that automates semantic versioning and changelog generation for polyrepo, monorepo, and nested-monorepo layouts, driven entirely by the PR body. Read-only mirror; source of truth is Bitbucket.",
+          "tags": [
+            "Woodpecker",
+            "Release Automation",
+            "Semver",
+            "Python"
+          ]
+        },
+        {
+          "name": "inbound-images",
+          "url": "https://github.com/devops-tashtiot/inbound-images",
+          "icon": "📥",
+          "description": "The org's own base images and Woodpecker plugins — real content, versioned independently per component (VERSION.txt) using the same commit-message grammar as a-woodpecker-plugins.",
+          "tags": [
+            "Docker",
+            "Woodpecker",
+            "Base Images"
+          ]
+        },
+        {
+          "name": "outbound-images-with-ca",
+          "url": "https://github.com/devops-tashtiot/outbound-images-with-ca",
+          "icon": "📤",
+          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach *.devopstashtiot.page over TLS. Everything shares one version, bumped only when the CA rotates.",
+          "tags": [
+            "Docker",
+            "TLS",
+            "Internal CA",
+            "Hardening"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SaaS",
+      "repos": [
+        {
+          "name": "argocd",
+          "url": "https://github.com/devops-tashtiot/argocd",
+          "icon": "🛰️",
+          "description": "Per-consumer ArgoCD onboarding configs (imported from the old Bitbucket ARGO project) plus the cluster-secret Helm chart that generates an ArgoCD cluster Secret for each entry in applicationClusters.",
+          "tags": [
+            "ArgoCD",
+            "Multi-tenant",
+            "Helm"
+          ]
+        },
+        {
+          "name": "woodpecker",
+          "url": "https://github.com/devops-tashtiot/woodpecker",
+          "icon": "🐦",
+          "description": "Per-consumer Woodpecker onboarding configs (imported from the old Bitbucket ARGO project), one directory per team requesting CI access.",
+          "tags": [
+            "Woodpecker",
+            "Multi-tenant",
+            "CI"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Automation",
+      "repos": [
+        {
+          "name": "aws-xray-db-sync",
+          "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
+          "icon": "🔄",
+          "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure.",
+          "tags": [
+            "AWS Lambda",
+            "EventBridge",
+            "S3",
+            "Terraform",
+            "Terragrunt"
           ]
         }
       ]
