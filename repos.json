@@ -175,22 +175,24 @@
           "name": "argocd",
           "url": "https://github.com/devops-tashtiot/argocd",
           "icon": "🛰️",
-          "description": "Per-consumer ArgoCD onboarding configs (imported from the old Bitbucket ARGO project) plus the cluster-secret Helm chart that generates an ArgoCD cluster Secret for each entry in applicationClusters.",
+          "description": "🚧 In development, not yet operational. Per-consumer ArgoCD onboarding configs (imported from the old Bitbucket ARGO project) plus the cluster-secret Helm chart that generates an ArgoCD cluster Secret for each entry in applicationClusters.",
           "tags": [
             "ArgoCD",
             "Multi-tenant",
-            "Helm"
+            "Helm",
+            "In Development"
           ]
         },
         {
           "name": "woodpecker",
           "url": "https://github.com/devops-tashtiot/woodpecker",
           "icon": "🐦",
-          "description": "Per-consumer Woodpecker onboarding configs (imported from the old Bitbucket ARGO project), one directory per team requesting CI access.",
+          "description": "🚧 In development, not yet operational. Per-consumer Woodpecker onboarding configs (imported from the old Bitbucket ARGO project), one directory per team requesting CI access.",
           "tags": [
             "Woodpecker",
             "Multi-tenant",
-            "CI"
+            "CI",
+            "In Development"
           ]
         }
       ]
