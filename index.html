@@ -148,16 +148,14 @@
       box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
     }
 
-    .card.status-clean {
+    .card.status-stable {
       background: #f6fef9;
       border-color: #85e0a3;
     }
 
-    .card.status-issues {
-      background: #f6f8fa;
-      border-color: #d0d7de;
-      opacity: 0.82;
-      filter: grayscale(0.35);
+    .card.status-wip {
+      background: #fffbe6;
+      border-color: #d4a72c;
     }
 
     .card-main {
@@ -246,6 +244,13 @@
       color: #57606a;
     }
 
+    .tag.tag-wip {
+      background: #fff8c5;
+      border-color: #d4a72c;
+      color: #9a6700;
+      font-weight: 600;
+    }
+
     footer {
       text-align: center;
       margin-top: 64px;
@@ -282,14 +287,18 @@
   }
 
   function buildCard(repo) {
-    const tags = (repo.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+    const tagList = repo.tags || [];
+    const tags = tagList
+      .map(t => `<span class="tag${t === 'In Progress' ? ' tag-wip' : ''}">${t}</span>`)
+      .join('');
     const ownerRepo = ownerRepoOf(repo);
+    const isWip = tagList.includes('In Progress');
     const issuesLink = ownerRepo ? `
         <a class="card-issues" data-repo="${ownerRepo}" href="https://github.com/${ownerRepo}/issues" target="_blank" rel="noopener">
           <span class="issues-text">Issues…</span>
         </a>` : '';
     return `
-      <div class="card" data-repo="${ownerRepo || ''}">
+      <div class="card ${isWip ? 'status-wip' : 'status-stable'}" data-repo="${ownerRepo || ''}">
         <a class="card-main" href="${repo.url}" target="_blank" rel="noopener">
           <div class="card-header">
             <span class="card-icon">${repo.icon || '📁'}</span>
@@ -312,9 +321,6 @@
     repos.forEach(ownerRepo => {
       const apply = (openIssues) => {
         const clean = openIssues === 0;
-        document.querySelectorAll(`.card[data-repo="${ownerRepo}"]`).forEach(card => {
-          card.classList.add(clean ? 'status-clean' : 'status-issues');
-        });
         document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"]`).forEach(link => {
           link.classList.add(clean ? 'is-clean' : 'has-issues');
           link.querySelector('.issues-text').textContent =

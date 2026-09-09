@@ -188,7 +188,6 @@
     },
     {
       "name": "SaaS",
-      "badge": "In Progress",
       "description": [
         "Packages the org's own tooling (ArgoCD, Woodpecker) as a service other teams can onboard onto, instead of each team standing up and maintaining their own instance."
       ],
@@ -202,7 +201,7 @@
             "ArgoCD",
             "Multi-tenant",
             "Helm",
-            "In Development"
+            "In Progress"
           ]
         },
         {
@@ -214,7 +213,7 @@
             "Woodpecker",
             "Multi-tenant",
             "CI",
-            "In Development"
+            "In Progress"
           ]
         }
       ]
