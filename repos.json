@@ -217,7 +217,7 @@
     {
       "name": "Automation",
       "description": [
-        "Small automations that exist purely to make day-to-day operational life simpler — syncing data and alerting on the repetitive chores nobody wants to do by hand."
+        "Small automations that exist purely to make day-to-day life simpler for our organization's staff members — syncing data and alerting on the repetitive chores nobody wants to do by hand."
       ],
       "repos": [
         {
