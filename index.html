@@ -304,13 +304,12 @@
 
   function buildCard(repo) {
     const ownerRepo = ownerRepoOf(repo);
-    const isWip = !!repo.inProgress;
     const issuesLink = ownerRepo ? `
         <a class="card-issues" data-repo="${ownerRepo}" href="https://github.com/${ownerRepo}/issues" target="_blank" rel="noopener">
           <span class="issues-text">Issues…</span>
         </a>` : '';
     return `
-      <div class="card ${isWip ? 'status-wip' : 'status-stable'}" data-repo="${ownerRepo || ''}">
+      <div class="card" data-repo="${ownerRepo || ''}">
         <a class="card-main" href="${repo.url}" target="_blank" rel="noopener">
           <div class="card-header">
             <span class="card-icon">${repo.icon || '📁'}</span>
@@ -321,7 +320,9 @@
       </div>`;
   }
 
-  function loadIssueStatus() {
+  // Card color (green/yellow) comes from the repo's real GitHub topics
+  // (the "in-progress" topic), not from anything hand-maintained in repos.json.
+  function loadRepoStatus() {
     const CACHE_TTL = 15 * 60 * 1000;
     const repos = new Set();
     document.querySelectorAll('.card[data-repo]').forEach(el => {
@@ -330,8 +331,12 @@
     });
 
     repos.forEach(ownerRepo => {
-      const apply = (openIssues) => {
+      const apply = (openIssues, wip) => {
         const clean = openIssues === 0;
+        document.querySelectorAll(`.card[data-repo="${ownerRepo}"]`).forEach(card => {
+          card.classList.remove('status-wip', 'status-stable');
+          card.classList.add(wip ? 'status-wip' : 'status-stable');
+        });
         document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"]`).forEach(link => {
           link.classList.add(clean ? 'is-clean' : 'has-issues');
           link.querySelector('.issues-text').textContent =
@@ -341,11 +346,11 @@
 
       let cached = null;
       try {
-        cached = JSON.parse(localStorage.getItem(`ghissues:${ownerRepo}`) || 'null');
+        cached = JSON.parse(localStorage.getItem(`ghrepo:${ownerRepo}`) || 'null');
       } catch (e) {}
 
       if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
-        apply(cached.count);
+        apply(cached.count, cached.wip);
         return;
       }
 
@@ -353,10 +358,11 @@
         .then(r => r.ok ? r.json() : Promise.reject(r.status))
         .then(data => {
           const count = data.open_issues_count || 0;
+          const wip = Array.isArray(data.topics) && data.topics.includes('in-progress');
           try {
-            localStorage.setItem(`ghissues:${ownerRepo}`, JSON.stringify({ count, ts: Date.now() }));
+            localStorage.setItem(`ghrepo:${ownerRepo}`, JSON.stringify({ count, wip, ts: Date.now() }));
           } catch (e) {}
-          apply(count);
+          apply(count, wip);
         })
         .catch(() => {
           document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"] .issues-text`)
@@ -395,7 +401,7 @@
       document.getElementById('org-link').href = `https://github.com/${data.org}`;
       document.getElementById('org-link').textContent = `github.com/${data.org}`;
       document.getElementById('content').innerHTML = data.sections.map(buildSection).join('');
-      loadIssueStatus();
+      loadRepoStatus();
     });
 </script>
 
