@@ -237,6 +237,9 @@
     },
     {
       "name": "AWS Environment & Governance",
+      "description": [
+        "Documents the AWS environment this org actually runs on — the guardrails in place (Control Tower SCPs, IAM role boundaries), the architecture (VPC, IRSA pod identity for EKS, Windows Server RDP access), and governance anomalies found while working in the account — so nobody has to rediscover them the hard way."
+      ],
       "repos": [
         {
           "name": "AWS Environment Docs",
