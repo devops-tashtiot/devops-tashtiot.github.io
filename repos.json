@@ -134,11 +134,12 @@
           "name": "a-woodpecker-plugins",
           "url": "https://github.com/devops-tashtiot/a-woodpecker-plugins",
           "icon": "🚀",
-          "description": "MasterVersions — a stateless release orchestrator (`release.py`) that automates semantic versioning and changelog generation for polyrepo, monorepo, and nested-monorepo layouts, driven entirely by the PR body. Read-only mirror; source of truth is Bitbucket.",
+          "description": "MasterVersions — a stateless release orchestrator (`release.py`) that automates semantic versioning and CHANGELOG generation for polyrepo, monorepo, and nested-monorepo repo layouts. The PR body is the single source of truth: conventional-commit lines (`feat(scope): msg`, wildcards, `!` for breaking) decide which components get tagged and what bump level, with commit-type recognition driven entirely by `cliff.toml`. Read-only GitHub mirror; source of truth is Bitbucket, synced one-way by a Woodpecker pipeline on every push.",
           "tags": [
             "Woodpecker",
             "Release Automation",
             "Semver",
+            "git-cliff",
             "Python"
           ]
         },
