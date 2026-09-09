@@ -15,6 +15,7 @@
         {
           "name": "Documentation",
           "url": "https://devops-tashtiot.github.io/devtools-labs/",
+          "repo": "devops-tashtiot/devtools-labs",
           "icon": "📚",
           "description": "Published architecture and bootstrap docs for the whole Devtools IaC + GitOps platform — explains all the infra we have (EKS, RDS, domain controller, Cloudflare, backups) and every repo in this section (aws-terraform-bootstrap, devtools-labs, clusters-provision/definition, devtools-provision/definition) and how they fit together.",
           "tags": [
@@ -39,6 +40,7 @@
         {
           "name": "devtools-labs",
           "url": "https://devops-tashtiot.github.io/devtools-labs/",
+          "repo": "devops-tashtiot/devtools-labs",
           "icon": "🧰",
           "description": "Step 2: Terraform + Terragrunt that provisions a multi-node EKS cluster and bootstraps ArgoCD inside it — plus the RDS instance, Windows AD domain controller, Cloudflare DNS/Access, and AWS Backup coverage the platform needs. Once ArgoCD is up, its two ApplicationSets auto-discover and auto-sync every cluster-infra tool and devtool (ingress, secrets sync, tunnel, Jira, Bitbucket, Confluence, Artifactory, ArgoCD) — none of it is ever applied by hand.",
           "tags": [
@@ -246,6 +248,7 @@
         {
           "name": "AWS Environment Docs",
           "url": "https://devops-tashtiot.github.io/docs/",
+          "repo": "devops-tashtiot/devops-tashtiot.github.io",
           "icon": "🛡️",
           "description": "Documents this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block (e.g. GuardDuty/VPC peering denied), IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Published on this same site (devops-tashtiot.github.io), which doubles as the GitHub Pages landing page guiding another devops team through every repo in this organization.",
           "tags": [

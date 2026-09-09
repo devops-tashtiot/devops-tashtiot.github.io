@@ -137,17 +137,77 @@
       border: 1px solid #d0d7de;
       border-radius: 10px;
       padding: 22px;
-      text-decoration: none;
-      color: inherit;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
     }
 
     .card:hover {
       border-color: #0969da;
       box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    }
+
+    .card.status-clean {
+      background: #f6fef9;
+      border-color: #85e0a3;
+    }
+
+    .card.status-issues {
+      background: #f6f8fa;
+      border-color: #d0d7de;
+      opacity: 0.82;
+      filter: grayscale(0.35);
+    }
+
+    .card-main {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-issues {
+      align-self: flex-start;
+      margin-top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 3px 10px 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #d0d7de;
+      color: #57606a;
+      background: #f6f8fa;
+    }
+
+    .card-issues::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: none;
+    }
+
+    .card-issues:hover {
+      border-color: #0969da;
+      color: #0969da;
+    }
+
+    .card-issues.is-clean {
+      color: #1a7f37;
+      background: #dafbe1;
+      border-color: #85e0a3;
+    }
+
+    .card-issues.has-issues {
+      color: #57606a;
+      background: #eaeef2;
+      border-color: #8c959f;
     }
 
     .card-header {
@@ -215,17 +275,77 @@
 </footer>
 
 <script>
+  function ownerRepoOf(repo) {
+    if (repo.repo) return repo.repo;
+    const m = (repo.url || '').match(/^https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
+    return m ? `${m[1]}/${m[2]}` : null;
+  }
+
   function buildCard(repo) {
     const tags = (repo.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+    const ownerRepo = ownerRepoOf(repo);
+    const issuesLink = ownerRepo ? `
+        <a class="card-issues" data-repo="${ownerRepo}" href="https://github.com/${ownerRepo}/issues" target="_blank" rel="noopener">
+          <span class="issues-text">Issues…</span>
+        </a>` : '';
     return `
-      <a class="card" href="${repo.url}" target="_blank" rel="noopener">
-        <div class="card-header">
-          <span class="card-icon">${repo.icon || '📁'}</span>
-          <span class="card-name">${repo.name}</span>
-        </div>
-        <p class="card-desc">${repo.description}</p>
-        <div class="card-tags">${tags}</div>
-      </a>`;
+      <div class="card" data-repo="${ownerRepo || ''}">
+        <a class="card-main" href="${repo.url}" target="_blank" rel="noopener">
+          <div class="card-header">
+            <span class="card-icon">${repo.icon || '📁'}</span>
+            <span class="card-name">${repo.name}</span>
+          </div>
+          <p class="card-desc">${repo.description}</p>
+          <div class="card-tags">${tags}</div>
+        </a>${issuesLink}
+      </div>`;
+  }
+
+  function loadIssueStatus() {
+    const CACHE_TTL = 15 * 60 * 1000;
+    const repos = new Set();
+    document.querySelectorAll('.card[data-repo]').forEach(el => {
+      const r = el.getAttribute('data-repo');
+      if (r) repos.add(r);
+    });
+
+    repos.forEach(ownerRepo => {
+      const apply = (openIssues) => {
+        const clean = openIssues === 0;
+        document.querySelectorAll(`.card[data-repo="${ownerRepo}"]`).forEach(card => {
+          card.classList.add(clean ? 'status-clean' : 'status-issues');
+        });
+        document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"]`).forEach(link => {
+          link.classList.add(clean ? 'is-clean' : 'has-issues');
+          link.querySelector('.issues-text').textContent =
+            clean ? 'No open issues' : `${openIssues} open issue${openIssues === 1 ? '' : 's'}`;
+        });
+      };
+
+      let cached = null;
+      try {
+        cached = JSON.parse(localStorage.getItem(`ghissues:${ownerRepo}`) || 'null');
+      } catch (e) {}
+
+      if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
+        apply(cached.count);
+        return;
+      }
+
+      fetch(`https://api.github.com/repos/${ownerRepo}`)
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(data => {
+          const count = data.open_issues_count || 0;
+          try {
+            localStorage.setItem(`ghissues:${ownerRepo}`, JSON.stringify({ count, ts: Date.now() }));
+          } catch (e) {}
+          apply(count);
+        })
+        .catch(() => {
+          document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"] .issues-text`)
+            .forEach(t => t.textContent = 'Issues');
+        });
+    });
   }
 
   function buildGrid(repos) {
@@ -258,6 +378,7 @@
       document.getElementById('org-link').href = `https://github.com/${data.org}`;
       document.getElementById('org-link').textContent = `github.com/${data.org}`;
       document.getElementById('content').innerHTML = data.sections.map(buildSection).join('');
+      loadIssueStatus();
     });
 </script>
 
