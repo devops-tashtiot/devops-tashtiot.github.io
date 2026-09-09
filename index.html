@@ -68,6 +68,40 @@
       gap: 48px;
     }
 
+    .legend {
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #57606a;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      flex: none;
+    }
+
+    .swatch-stable {
+      background: #f6fef9;
+      border: 1px solid #85e0a3;
+    }
+
+    .swatch-wip {
+      background: #fffbe6;
+      border: 1px solid #d4a72c;
+    }
+
     .section-label {
       display: flex;
       align-items: center;
@@ -272,6 +306,11 @@
   <h1 id="org-name">devops-tashtiot</h1>
   <p id="org-tagline"></p>
 </header>
+
+<div class="legend">
+  <span class="legend-item"><span class="legend-swatch swatch-stable"></span>Ready — no "In Progress" tag</span>
+  <span class="legend-item"><span class="legend-swatch swatch-wip"></span>In Progress — tagged "In Progress"</span>
+</div>
 
 <div id="content"></div>
 
