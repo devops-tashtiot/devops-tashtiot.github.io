@@ -1,6 +1,6 @@
 {
   "Platform-Infra-Org/apis-library": {
-    "issues": 1,
+    "issues": 0,
     "wip": false
   },
   "devops-tashtiot/a-woodpecker-plugins": {
@@ -24,7 +24,7 @@
     "wip": false
   },
   "devops-tashtiot/clusters-provision": {
-    "issues": 1,
+    "issues": 0,
     "wip": false
   },
   "devops-tashtiot/devops-api": {
@@ -44,7 +44,7 @@
     "wip": false
   },
   "devops-tashtiot/devtools-provision": {
-    "issues": 1,
+    "issues": 0,
     "wip": false
   },
   "devops-tashtiot/inbound-images": {
