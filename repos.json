@@ -242,7 +242,7 @@
           "name": "AWS Environment Docs",
           "url": "https://devops-tashtiot.github.io/docs/",
           "icon": "🛡️",
-          "description": "Documents this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block (e.g. GuardDuty/VPC peering denied by policy p-uya91w09), IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Published on this same site (devops-tashtiot.github.io), which doubles as the GitHub Pages landing page guiding another devops team through every repo in this organization.",
+          "description": "Documents this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block (e.g. GuardDuty/VPC peering denied), IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Published on this same site (devops-tashtiot.github.io), which doubles as the GitHub Pages landing page guiding another devops team through every repo in this organization.",
           "tags": [
             "SCP",
             "Control Tower",
