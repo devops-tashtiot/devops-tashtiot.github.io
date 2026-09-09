@@ -142,7 +142,6 @@
     },
     {
       "name": "CI/CD",
-      "badge": "In Progress",
       "description": [
         "Custom semantic-versioning and CHANGELOG automation for every Docker image our CI/CD pipelines build, driven by conventional commits rather than manual tagging.",
         "Also customizes third-party images by baking in the internal CA, so outside images can be pulled and run inside the org's network over TLS."
@@ -158,7 +157,8 @@
             "Release Automation",
             "Semver",
             "git-cliff",
-            "Python"
+            "Python",
+            "In Progress"
           ]
         },
         {
@@ -169,7 +169,8 @@
           "tags": [
             "Docker",
             "Woodpecker",
-            "Base Images"
+            "Base Images",
+            "In Progress"
           ]
         },
         {
@@ -181,7 +182,8 @@
             "Docker",
             "TLS",
             "Internal CA",
-            "Hardening"
+            "Hardening",
+            "In Progress"
           ]
         }
       ]
