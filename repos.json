@@ -87,14 +87,16 @@
           "name": "devops-api",
           "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
           "icon": "⚡",
-          "description": "FastAPI service that orchestrates DNS records, HAProxy load-balancer configs, and chat messages by delegating to AWX, ArgoCD, Vault, and Bitbucket. Bitbucket is the source of truth; this GitHub copy is a read-only mirror kept in sync by a Woodpecker pipeline on every Bitbucket push.",
+          "description": "FastAPI service that self-service-provisions devtool resources: Bitbucket/Jira projects, Confluence spaces, SonarQube groups, and Artifactory projects (each with create + admin/user-group assignment + rollback-on-failure), plus ArgoCD GitOps consumer-config and cluster-secret management. Bitbucket is the source of truth; this GitHub copy is a read-only mirror kept in sync by a Woodpecker pipeline on every Bitbucket push.",
           "tags": [
             "Python",
             "FastAPI",
-            "AWX",
-            "ArgoCD",
-            "Vault",
-            "Bitbucket"
+            "Bitbucket",
+            "Jira",
+            "Confluence",
+            "SonarQube",
+            "Artifactory",
+            "ArgoCD"
           ]
         },
         {
