@@ -9,7 +9,7 @@
           "name": "Documentation",
           "url": "https://devops-tashtiot.github.io/devtools-labs/",
           "icon": "📚",
-          "description": "Published architecture and bootstrap docs for the whole Devtools IaC + GitOps platform — explains all the infra we have (EKS, RDS, domain controller, Cloudflare, backups) and every repo in this section (devtools-labs, clusters-provision/definition, devtools-provision/definition) and how they fit together.",
+          "description": "Published architecture and bootstrap docs for the whole Devtools IaC + GitOps platform — explains all the infra we have (EKS, RDS, domain controller, Cloudflare, backups) and every repo in this section (aws-terraform-bootstrap, devtools-labs, clusters-provision/definition, devtools-provision/definition) and how they fit together.",
           "tags": [
             "Docs",
             "Architecture",
