@@ -102,7 +102,7 @@
       "name": "Platform",
       "description": [
         "Wrapper APIs that sit in front of all our tools — Bitbucket, Jira, Confluence, SonarQube, Artifactory, ArgoCD — so they're provisioned and managed through one consistent interface instead of each tool's own console.",
-        "In the operational environment, those APIs are called through approval-request templates built on Backstage, rather than being hit directly."
+        "In the org environment, those APIs are called through approval-request templates built on Backstage, rather than being hit directly."
       ],
       "repos": [
         {
