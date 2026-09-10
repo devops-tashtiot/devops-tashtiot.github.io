@@ -9,7 +9,7 @@
         "The foundation is identity and data: a Windows AD domain controller (mirroring the on-prem one) paired with RHBK (Keycloak) for OIDC, and a shared Postgres database on RDS — the same primitives every devtool on top depends on.",
         "The devtools themselves (Jira, Bitbucket, Confluence, Artifactory, ArgoCD, Xray) are layered on top of that foundation, standing up a complete environment with effectively one click.",
         "Foundation and devtools alike are provisioned and kept in sync purely through IaC (Terraform/Terragrunt) and GitOps (ArgoCD auto-syncing from Git) — nothing is ever applied by hand.",
-        "Every tool is reachable under a private domain suffix, fronted by Cloudflare and locked down with Cloudflare Access so only org member emails can get in."
+        "Every tool is reachable under the *.devopstashtiot.page domain suffix, fronted by Cloudflare and locked down with Cloudflare Access so only org member emails can get in."
       ],
       "repos": [
         {
@@ -102,7 +102,7 @@
           "name": "outbound-images-with-ca",
           "url": "https://github.com/devops-tashtiot/outbound-images-with-ca",
           "icon": "📤",
-          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach the org's private domains over TLS — the image's own real tag is left untouched, so it's still obvious which upstream image/version it actually is. The CA is the only thing that changes here, and it rotates yearly, so this repo's own version only bumps when the CA rotates, not per upstream release. The other repo that replaced a-woodpecker-plugins's one-size-fits-all image tagging."
+          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach *.devopstashtiot.page over TLS — the image's own real tag is left untouched, so it's still obvious which upstream image/version it actually is. The CA is the only thing that changes here, and it rotates yearly, so this repo's own version only bumps when the CA rotates, not per upstream release. The other repo that replaced a-woodpecker-plugins's one-size-fits-all image tagging."
         }
       ]
     },
