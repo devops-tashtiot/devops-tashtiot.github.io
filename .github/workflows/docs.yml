@@ -38,7 +38,7 @@ jobs:
       - name: Prepare deploy directory
         run: |
           mkdir -p _deploy/docs
-          cp index.html repos.json status.json vpc-architecture.html _deploy/
+          cp index.html repos.json status.json _deploy/
           cp -r _site/. _deploy/docs/
 
       - name: Deploy to gh-pages

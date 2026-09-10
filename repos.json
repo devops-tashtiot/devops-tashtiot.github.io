@@ -9,7 +9,7 @@
         "The foundation is identity and data: a Windows AD domain controller (mirroring the on-prem one) paired with RHBK (Keycloak) for OIDC, and a shared Postgres database on RDS — the same primitives every devtool on top depends on.",
         "The devtools themselves (Jira, Bitbucket, Confluence, Artifactory, ArgoCD, Xray) are layered on top of that foundation, standing up a complete environment with effectively one click.",
         "Foundation and devtools alike are provisioned and kept in sync purely through IaC (Terraform/Terragrunt) and GitOps (ArgoCD auto-syncing from Git) — nothing is ever applied by hand.",
-        "Every tool is reachable under the *.devopstashtiot.page domain suffix, fronted by Cloudflare and locked down with Cloudflare Access so only org member emails can get in."
+        "Every tool is reachable under a private domain suffix, fronted by Cloudflare and locked down with Cloudflare Access so only org member emails can get in."
       ],
       "repos": [
         {
@@ -102,7 +102,7 @@
           "name": "outbound-images-with-ca",
           "url": "https://github.com/devops-tashtiot/outbound-images-with-ca",
           "icon": "📤",
-          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach *.devopstashtiot.page over TLS. Everything shares one version, bumped only when the CA rotates."
+          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach the org's private domains over TLS. Everything shares one version, bumped only when the CA rotates."
         }
       ]
     },
@@ -143,15 +143,15 @@
     {
       "name": "AWS Environment & Governance",
       "description": [
-        "Documents the AWS environment this org actually runs on — the guardrails in place (Control Tower SCPs, IAM role boundaries), the architecture (VPC, IRSA pod identity for EKS, Windows Server RDP access), and governance anomalies found while working in the account — so nobody has to rediscover them the hard way."
+        "Documents the AWS environment this org actually runs on — the guardrails in place (Control Tower SCPs, IAM role boundaries), the architecture (VPC, IRSA pod identity for EKS, Windows Server RDP access), and governance anomalies found while working in the account — so nobody has to rediscover them the hard way.",
+        "🔒 The docs themselves live in a private repo, not on this public site — they name real SCP policy IDs, real resource IDs, and the exact set of security detections that are and aren't enabled, which isn't appropriate to publish."
       ],
       "repos": [
         {
           "name": "AWS Environment Docs",
-          "url": "https://devops-tashtiot.github.io/docs/",
-          "repo": "devops-tashtiot/devops-tashtiot.github.io",
+          "url": "https://github.com/devops-tashtiot/aws-internal-docs",
           "icon": "🛡️",
-          "description": "Documents this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block (e.g. GuardDuty/VPC peering denied), IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Published on this same site (devops-tashtiot.github.io), which doubles as the GitHub Pages landing page guiding another devops team through every repo in this organization."
+          "description": "Private repo documenting this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block, IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Moved out of the public docs site — org members only."
         }
       ]
     }
