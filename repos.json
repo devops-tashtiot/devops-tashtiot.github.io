@@ -90,19 +90,19 @@
           "name": "a-woodpecker-plugins",
           "url": "https://github.com/devops-tashtiot/a-woodpecker-plugins",
           "icon": "🚀",
-          "description": "MasterVersions — a stateless release orchestrator (`release.py`) that automates semantic versioning and CHANGELOG generation for polyrepo, monorepo, and nested-monorepo repo layouts. The PR body is the single source of truth: conventional-commit lines (`feat(scope): msg`, wildcards, `!` for breaking) decide which components get tagged and what bump level, with commit-type recognition driven entirely by `cliff.toml`. Read-only GitHub mirror; source of truth is Bitbucket, synced one-way by a Woodpecker pipeline on every push."
+          "description": "⚰️ Retired — the org's old, one-size-fits-all method for tagging every CI/CD image. MasterVersions (`release.py`) generated a brand-new semantic-version tag for every image on every relevant change. That broke down for images we only customize rather than author ourselves: generating a new tag on top of a real upstream image (e.g. after wrapping it with our internal CA) meant losing track of which real image it actually was, since the image's own tag got overwritten instead of preserved. Replaced by inbound-images and outbound-images-with-ca, which each handle a different half of that problem. Read-only GitHub mirror; source of truth was Bitbucket."
         },
         {
           "name": "inbound-images",
           "url": "https://github.com/devops-tashtiot/inbound-images",
           "icon": "📥",
-          "description": "The org's own base images and Woodpecker plugins — real content, versioned independently per component (VERSION.txt) using the same commit-message grammar as a-woodpecker-plugins."
+          "description": "The org's own base images and Woodpecker plugins — real, in-house content we actually author, so independent per-component versioning (VERSION.txt) still makes sense here. One of the two repos that replaced a-woodpecker-plugins's one-size-fits-all image tagging."
         },
         {
           "name": "outbound-images-with-ca",
           "url": "https://github.com/devops-tashtiot/outbound-images-with-ca",
           "icon": "📤",
-          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach the org's private domains over TLS. Everything shares one version, bumped only when the CA rotates."
+          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach the org's private domains over TLS — the image's own real tag is left untouched, so it's still obvious which upstream image/version it actually is. The CA is the only thing that changes here, and it rotates yearly, so this repo's own version only bumps when the CA rotates, not per upstream release. The other repo that replaced a-woodpecker-plugins's one-size-fits-all image tagging."
         }
       ]
     },
@@ -116,13 +116,13 @@
           "name": "argocd",
           "url": "https://github.com/devops-tashtiot/argocd",
           "icon": "🛰️",
-          "description": "🚧 In development, not yet operational. Per-consumer ArgoCD onboarding configs (imported from the old Bitbucket ARGO project) plus the cluster-secret Helm chart that generates an ArgoCD cluster Secret for each entry in applicationClusters."
+          "description": "🚧 In development, not yet operational. Per-consumer ArgoCD onboarding configs plus the cluster-secret Helm chart that generates an ArgoCD cluster Secret for each entry in applicationClusters."
         },
         {
           "name": "woodpecker",
           "url": "https://github.com/devops-tashtiot/woodpecker",
           "icon": "🐦",
-          "description": "🚧 In development, not yet operational. Per-consumer Woodpecker onboarding configs (imported from the old Bitbucket ARGO project), one directory per team requesting CI access."
+          "description": "🚧 In development, not yet operational. Per-consumer Woodpecker onboarding configs, one directory per team requesting CI access."
         }
       ]
     },
