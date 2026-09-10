@@ -139,21 +139,6 @@
           "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure."
         }
       ]
-    },
-    {
-      "name": "AWS Environment & Governance",
-      "description": [
-        "Documents the AWS environment this org actually runs on — the guardrails in place (Control Tower SCPs, IAM role boundaries), the architecture (VPC, IRSA pod identity for EKS, Windows Server RDP access), and governance anomalies found while working in the account — so nobody has to rediscover them the hard way.",
-        "🔒 The docs themselves live in a private repo, not on this public site — they name real SCP policy IDs, real resource IDs, and the exact set of security detections that are and aren't enabled, which isn't appropriate to publish."
-      ],
-      "repos": [
-        {
-          "name": "AWS Environment Docs",
-          "url": "https://github.com/devops-tashtiot/aws-internal-docs",
-          "icon": "🛡️",
-          "description": "Private repo documenting this AWS account's guardrails and how the environment is actually built: Control Tower SCPs and what they block, IAM role boundaries, IRSA pod identity for EKS, VPC architecture, Windows Server RDP access, and governance anomalies found while probing the account. Moved out of the public docs site — org members only."
-        }
-      ]
     }
   ]
 }
