@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>devops-tashtiot</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f6f8fa;
+      color: #24292f;
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: #24292f;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #57606a;
+      font-size: 1rem;
+    }
+
+    #content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .legend {
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #57606a;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      flex: none;
+    }
+
+    .swatch-stable {
+      background: #f6fef9;
+      border: 1px solid #85e0a3;
+    }
+
+    .swatch-wip {
+      background: #fffbe6;
+      border: 1px solid #d4a72c;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #57606a;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #d0d7de;
+    }
+
+    .section-label.is-wip {
+      color: #9a6700;
+      border-bottom-color: #d4a72c;
+    }
+
+    .section-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      padding: 2px 10px;
+      border-radius: 20px;
+      background: #fff8c5;
+      color: #9a6700;
+      border: 1px solid #d4a72c;
+    }
+
+    .section-desc {
+      font-size: 0.88rem;
+      color: #57606a;
+      line-height: 1.6;
+      max-width: 780px;
+      margin: 0 0 8px;
+    }
+
+    .section-desc + .section-desc {
+      margin-top: -4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .aws-subsections {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .subsection-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8c959f;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+    }
+
+    .card:hover {
+      border-color: #0969da;
+      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    }
+
+    .card.status-stable {
+      background: #f6fef9;
+      border-color: #85e0a3;
+    }
+
+    .card.status-wip {
+      background: #fffbe6;
+      border-color: #d4a72c;
+    }
+
+    .card-main {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-issues {
+      align-self: flex-start;
+      margin-top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 3px 10px 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #d0d7de;
+      color: #57606a;
+      background: #f6f8fa;
+    }
+
+    .card-issues::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: none;
+    }
+
+    .card-issues:hover {
+      border-color: #0969da;
+      color: #0969da;
+    }
+
+    .card-issues.is-clean {
+      color: #1a7f37;
+      background: #dafbe1;
+      border-color: #85e0a3;
+    }
+
+    .card-issues.has-issues {
+      color: #57606a;
+      background: #eaeef2;
+      border-color: #8c959f;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon { font-size: 1.3rem; }
+
+    .card-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0969da;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #57606a;
+      line-height: 1.55;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 64px;
+      color: #8c959f;
+      font-size: 0.8rem;
+    }
+
+    footer a { color: #8c959f; text-decoration: none; }
+    footer a:hover { color: #0969da; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1 id="org-name">devops-tashtiot</h1>
+  <p id="org-tagline"></p>
+</header>
+
+<div class="legend">
+  <span class="legend-item"><span class="legend-swatch swatch-stable"></span>Ready — repo has no "in-progress" GitHub topic</span>
+  <span class="legend-item"><span class="legend-swatch swatch-wip"></span>In Progress — repo has the "in-progress" GitHub topic</span>
+</div>
+
+<div id="content"></div>
+
+<footer>
+  <a id="org-link" href="https://github.com/devops-tashtiot" target="_blank" rel="noopener">github.com/devops-tashtiot</a>
+</footer>
+
+<script>
+  function ownerRepoOf(repo) {
+    if (repo.repo) return repo.repo;
+    const m = (repo.url || '').match(/^https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
+    return m ? `${m[1]}/${m[2]}` : null;
+  }
+
+  function buildCard(repo) {
+    const ownerRepo = ownerRepoOf(repo);
+    const issuesLink = ownerRepo ? `
+        <a class="card-issues" data-repo="${ownerRepo}" href="https://github.com/${ownerRepo}/issues" target="_blank" rel="noopener">
+          <span class="issues-text">Issues…</span>
+        </a>` : '';
+    return `
+      <div class="card" data-repo="${ownerRepo || ''}">
+        <a class="card-main" href="${repo.url}" target="_blank" rel="noopener">
+          <div class="card-header">
+            <span class="card-icon">${repo.icon || '📁'}</span>
+            <span class="card-name">${repo.name}</span>
+          </div>
+          <p class="card-desc">${repo.description}</p>
+        </a>${issuesLink}
+      </div>`;
+  }
+
+  // Card color (green/yellow) comes from each repo's real GitHub topics
+  // ("in-progress"), and the issues pill from its real open-issue count --
+  // both precomputed at deploy time into status.json by
+  // scripts/generate_status.py (run with the workflow's authenticated
+  // token, 5000 req/hour) so visitors' browsers never call the GitHub API
+  // directly and never hit its 60 req/hour unauthenticated, per-IP limit.
+  function loadRepoStatus() {
+    fetch('status.json')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(status => {
+        document.querySelectorAll('.card[data-repo]').forEach(card => {
+          const ownerRepo = card.getAttribute('data-repo');
+          const entry = ownerRepo && status[ownerRepo];
+          if (!entry) return;
+          const clean = entry.issues === 0;
+          card.classList.remove('status-wip', 'status-stable');
+          card.classList.add(entry.wip ? 'status-wip' : 'status-stable');
+          document.querySelectorAll(`.card-issues[data-repo="${ownerRepo}"]`).forEach(link => {
+            link.classList.add(clean ? 'is-clean' : 'has-issues');
+            link.querySelector('.issues-text').textContent =
+              clean ? 'No open issues' : `${entry.issues} open issue${entry.issues === 1 ? '' : 's'}`;
+          });
+        });
+      })
+      .catch(() => {
+        // status.json missing/unreachable -- cards stay uncolored, issues
+        // pills stay labeled "Issues..." rather than showing wrong data.
+      });
+  }
+
+  function buildGrid(repos) {
+    return `<div class="grid">${repos.map(buildCard).join('')}</div>`;
+  }
+
+  function buildSection(section) {
+    const badge = section.badge ? `<span class="section-badge">${section.badge}</span>` : '';
+    const label = `<div class="section-label${section.badge ? ' is-wip' : ''}">${section.name}${badge}</div>`;
+    const desc = (section.description || [])
+      .map(line => `<p class="section-desc">${line}</p>`).join('');
+
+    if (section.subsections) {
+      const subs = section.subsections.map(sub => `
+        <div>
+          <div class="subsection-label">${sub.name}</div>
+          ${buildGrid(sub.repos)}
+        </div>`).join('');
+      return `<div>${label}${desc}<div class="aws-subsections">${subs}</div></div>`;
+    }
+
+    return `<div>${label}${desc}${buildGrid(section.repos)}</div>`;
+  }
+
+  fetch('repos.json')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('org-name').textContent = data.org || 'devops-tashtiot';
+      document.getElementById('org-tagline').textContent = data.tagline || '';
+      document.getElementById('org-link').href = `https://github.com/${data.org}`;
+      document.getElementById('org-link').textContent = `github.com/${data.org}`;
+      document.getElementById('content').innerHTML = data.sections.map(buildSection).join('');
+      loadRepoStatus();
+    });
+</script>
+
+</body>
+</html>
