@@ -1,0 +1,144 @@
+{
+  "org": "devops-tashtiot",
+  "tagline": "Infrastructure, automation, and platform tooling",
+  "sections": [
+    {
+      "name": "Devtools IaC + GitOps",
+      "description": [
+        "As a devops team managing many internal tools, we built this to accelerate development with a self-hosted AWS environment — fully customizable and modeled after our real internal setup, not a stripped-down sandbox. Our org actually runs on an on-prem network with its own Windows AD domain controller, so this environment reproduces that same identity setup in AWS rather than inventing a cloud-only one.",
+        "The foundation is identity and data: a Windows AD domain controller (mirroring the on-prem one) paired with RHBK (Keycloak) for OIDC, and a shared Postgres database on RDS — the same primitives every devtool on top depends on.",
+        "The devtools themselves (Jira, Bitbucket, Confluence, Artifactory, ArgoCD, Xray) are layered on top of that foundation, standing up a complete environment with effectively one click.",
+        "Foundation and devtools alike are provisioned and kept in sync purely through IaC (Terraform/Terragrunt) and GitOps (ArgoCD auto-syncing from Git) — nothing is ever applied by hand.",
+        "Every tool is reachable under the *.devopstashtiot.page domain suffix (this AWS environment's domain suffix — on-prem uses a different one, of course), fronted by Cloudflare and locked down with Cloudflare Access so only org member emails can get in."
+      ],
+      "repos": [
+        {
+          "name": "Documentation",
+          "url": "https://devops-tashtiot.github.io/devtools-labs/",
+          "repo": "devops-tashtiot/devtools-labs",
+          "icon": "📚",
+          "description": "Published architecture and bootstrap docs for the whole Devtools IaC + GitOps platform — explains all the infra we have (EKS, RDS, domain controller, Cloudflare, backups) and every repo in this section (aws-terraform-bootstrap, devtools-labs, clusters-provision/definition, devtools-provision/definition) and how they fit together."
+        },
+        {
+          "name": "aws-terraform-bootstrap",
+          "url": "https://github.com/devops-tashtiot/aws-terraform-bootstrap",
+          "icon": "🏗️",
+          "description": "Step 1, once per AWS account: one-time Terraform that creates the shared S3 bucket used for Terragrunt remote state across all projects — must exist before devtools-labs can apply."
+        },
+        {
+          "name": "devtools-labs",
+          "url": "https://devops-tashtiot.github.io/devtools-labs/",
+          "repo": "devops-tashtiot/devtools-labs",
+          "icon": "🧰",
+          "description": "Step 2: Terraform + Terragrunt that provisions a multi-node EKS cluster and bootstraps ArgoCD inside it — plus the RDS instance, Windows AD domain controller, Cloudflare DNS/Access, and AWS Backup coverage the platform needs. Once ArgoCD is up, its two ApplicationSets auto-discover and auto-sync every cluster-infra tool and devtool (ingress, secrets sync, tunnel, Jira, Bitbucket, Confluence, Artifactory, ArgoCD) — none of it is ever applied by hand."
+        },
+        {
+          "name": "clusters-provision",
+          "url": "https://github.com/devops-tashtiot/clusters-provision",
+          "icon": "🧱",
+          "description": "Helm charts for the cluster-wide infrastructure the platform runs on — ingress-nginx, external-secrets-operator, cloudflared, and the RHBK OIDC identity provider. The \"what to deploy\" half of a provision/definition pair, auto-discovered by ArgoCD's clusters-applicationset."
+        },
+        {
+          "name": "clusters-definition",
+          "url": "https://github.com/devops-tashtiot/clusters-definition",
+          "icon": "🎛️",
+          "description": "Environment-specific Helm values overrides for clusters-provision, plus the clusters-applicationset itself. Deploys first so devtools (e.g. Bitbucket's ExternalSecret) never race the infra they depend on."
+        },
+        {
+          "name": "devtools-provision",
+          "url": "https://github.com/devops-tashtiot/devtools-provision",
+          "icon": "🗂️",
+          "description": "Umbrella Helm charts for the self-hosted devtools platform — Jira, Bitbucket, Confluence, Artifactory, ArgoCD, and Xray Data Center editions. The \"what to deploy\" half of a provision/definition pair, auto-discovered by ArgoCD's devtools-applicationset."
+        },
+        {
+          "name": "devtools-definition",
+          "url": "https://github.com/devops-tashtiot/devtools-definition",
+          "icon": "🔧",
+          "description": "Environment-specific Helm values overrides for devtools-provision, plus the devtools-applicationset itself — ingress hosts, shared RDS credentials, and per-tool resource sizing."
+        }
+      ]
+    },
+    {
+      "name": "Platform",
+      "description": [
+        "Wrapper APIs that sit in front of all our tools — Bitbucket, Jira, Confluence, SonarQube, Artifactory, ArgoCD — so they're provisioned and managed through one consistent interface instead of each tool's own console.",
+        "In the org environment, those APIs are called through approval-request templates built on Backstage, rather than being hit directly."
+      ],
+      "repos": [
+        {
+          "name": "devops-api",
+          "url": "https://github.com/devops-tashtiot/devops-api/blob/master/README.md",
+          "icon": "⚡",
+          "description": "FastAPI service that self-service-provisions devtool resources: Bitbucket/Jira projects, Confluence spaces, SonarQube groups, and Artifactory projects (each with create + admin/user-group assignment + rollback-on-failure), plus ArgoCD GitOps consumer-config and cluster-secret management. Bitbucket is the source of truth; this GitHub copy is a read-only mirror kept in sync by a Woodpecker pipeline on every Bitbucket push."
+        },
+        {
+          "name": "apis-library",
+          "url": "https://github.com/Platform-Infra-Org/apis-library",
+          "icon": "📦",
+          "description": "Shared Python library with async connectors for AWX, ArgoCD, Bitbucket, and Vault, plus a reusable FastAPI application factory."
+        }
+      ]
+    },
+    {
+      "name": "CI/CD",
+      "description": [
+        "Custom semantic-versioning and CHANGELOG automation for every Docker image our CI/CD pipelines build, driven by conventional commits rather than manual tagging.",
+        "Also customizes third-party images by baking in the internal CA, so outside images can be pulled and run inside the org's network over TLS."
+      ],
+      "repos": [
+        {
+          "name": "a-woodpecker-plugins",
+          "url": "https://github.com/devops-tashtiot/a-woodpecker-plugins",
+          "icon": "🚀",
+          "description": "⚰️ Retired — the org's old, one-size-fits-all method for tagging every CI/CD image. MasterVersions is a robust release-versioning plugin built on git-cliff that drives tagging from the PR description rather than individual commit messages — a workaround for the fact that our org doesn't follow conventional-commit/semantic-release standards, so there was no reliable per-commit signal to parse. It generated a brand-new semantic-version tag for every image on every relevant change. That broke down for images we only customize rather than author ourselves: generating a new tag on top of a real upstream image (e.g. after wrapping it with our internal CA) meant losing track of which real image it actually was, since the image's own tag got overwritten instead of preserved. Replaced by inbound-images and outbound-images-with-ca, which each handle a different half of that problem. Read-only GitHub mirror; source of truth was Bitbucket."
+        },
+        {
+          "name": "inbound-images",
+          "url": "https://github.com/devops-tashtiot/inbound-images",
+          "icon": "📥",
+          "description": "The org's own base images and Woodpecker plugins — real, in-house content we actually author, so independent per-component versioning (VERSION.txt) still makes sense here. One of the two repos that replaced a-woodpecker-plugins's one-size-fits-all image tagging."
+        },
+        {
+          "name": "outbound-images-with-ca",
+          "url": "https://github.com/devops-tashtiot/outbound-images-with-ca",
+          "icon": "📤",
+          "description": "Hardened copies of upstream images we didn't author, wrapped only with the internal CA so they can reach the org's domain suffix (in our AWS env it's *.devopstashtiot.page) over TLS — the image's own real tag is left untouched, so it's still obvious which upstream image/version it actually is. The CA is the only thing that changes here, and it rotates yearly, so this repo's own version only bumps when the CA rotates, not per upstream release. The other repo that replaced a-woodpecker-plugins's one-size-fits-all image tagging."
+        }
+      ]
+    },
+    {
+      "name": "SaaS",
+      "description": [
+        "Packages the org's own tooling (ArgoCD, Woodpecker) as a service other teams can onboard onto, instead of each team standing up and maintaining their own instance."
+      ],
+      "repos": [
+        {
+          "name": "argocd",
+          "url": "https://github.com/devops-tashtiot/argocd",
+          "icon": "🛰️",
+          "description": "🚧 In development, not yet operational. Per-consumer ArgoCD onboarding configs plus the cluster-secret Helm chart that generates an ArgoCD cluster Secret for each entry in applicationClusters."
+        },
+        {
+          "name": "woodpecker",
+          "url": "https://github.com/devops-tashtiot/woodpecker",
+          "icon": "🐦",
+          "description": "🚧 In development, not yet operational. Per-consumer Woodpecker onboarding configs, one directory per team requesting CI access."
+        }
+      ]
+    },
+    {
+      "name": "Automation",
+      "description": [
+        "Small automations that exist purely to make day-to-day life simpler for our organization's staff members — syncing data and alerting on the repetitive chores nobody wants to do by hand."
+      ],
+      "repos": [
+        {
+          "name": "aws-xray-db-sync",
+          "url": "https://github.com/devops-tashtiot/aws-xray-db-sync",
+          "icon": "🔄",
+          "description": "Lambda that runs every minute to sync JFrog Xray offline DB bundles to S3, with SNS alerts on success or failure."
+        }
+      ]
+    }
+  ]
+}
